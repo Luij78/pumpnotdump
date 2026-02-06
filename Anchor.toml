@@ -1,0 +1,21 @@
+[toolchain]
+
+[features]
+seeds = false
+skip-lint = false
+
+[programs.localnet]
+pumpnotdump = "PNDFunAntiRugLaunchpadV1111111111111111111"
+
+[programs.devnet]
+pumpnotdump = "PNDFunAntiRugLaunchpadV1111111111111111111"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/skipper-wallet.json"
+
+[scripts]
+test = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
