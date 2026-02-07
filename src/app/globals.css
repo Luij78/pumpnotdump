@@ -1,19 +1,5 @@
 @import "tailwindcss";
 
-:root {
-  --color-bg: #0a0a0f;
-  --color-bg-card: #12121a;
-  --color-bg-card-hover: #1a1a28;
-  --color-green: #00ff88;
-  --color-green-dim: #00cc6a;
-  --color-red: #ff3366;
-  --color-yellow: #ffd700;
-  --color-purple: #8b5cf6;
-  --color-text: #e0e0e0;
-  --color-text-dim: #888;
-  --color-border: #2a2a3a;
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -25,94 +11,27 @@ html {
 }
 
 body {
-  background: var(--color-bg);
-  color: var(--color-text);
+  background: #0a0a0f;
+  color: #e0e0e0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Gradient text utility */
-.gradient-text {
-  background: linear-gradient(135deg, #00ff88 0%, #00ccff 50%, #8b5cf6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+::selection {
+  background: rgba(0, 255, 136, 0.2);
+  color: #fff;
 }
 
-.gradient-text-warm {
-  background: linear-gradient(135deg, #ffd700 0%, #ff6b35 50%, #ff3366 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Glowing border */
-.glow-border {
-  border: 1px solid rgba(0, 255, 136, 0.2);
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.05);
-}
-
-.glow-border:hover {
-  border-color: rgba(0, 255, 136, 0.4);
-  box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
-}
-
-/* Score badge animations */
-@keyframes pulse-green {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); }
-  50% { box-shadow: 0 0 0 10px rgba(0, 255, 136, 0); }
-}
-
-@keyframes pulse-red {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.4); }
-  50% { box-shadow: 0 0 0 10px rgba(255, 51, 102, 0); }
-}
-
-.pulse-green {
-  animation: pulse-green 2s infinite;
-}
-
-.pulse-red {
-  animation: pulse-red 2s infinite;
-}
-
-/* Floating animation */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Grid background pattern */
-.grid-bg {
-  background-image: 
-    linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
-}
-
-/* Stat counter */
-.stat-highlight {
-  font-variant-numeric: tabular-nums;
-}
-
-/* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg);
+  background: #0a0a0f;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  background: #222;
+  border-radius: 2px;
 }
