@@ -2,7 +2,7 @@
 
 **Student:** Luis Garcia
 **Started:** 2026-01-30
-**Status:** Ch1 ✅ | Ch2 ✅ | Ch3 IN PROGRESS | Ch4-6 Not Started
+**Status:** Ch1 ✅ | Ch2 ✅ | Ch3 ✅ | Ch4 IN PROGRESS | Ch5-13 Not Started
 
 ---
 
@@ -356,3 +356,146 @@ Value estimated using either **replacement cost** or **reproduction cost**.
 Two types of cost:
 1. **Replacement cost** — Estimated cost at current prices to construct a comparable building with equal utility using modern materials, design, and features. NOT necessarily same materials — some may no longer be available, substitution may be necessary.
 2. **Reproduction cost** — Estimated cost at current prices to construct an exact duplicate or replica using the same materials, design, and layout. **Preferred in appraisals of historic properties.**
+
+## Chapter 3, Section 5: The CMA (Comparative Market Analysis)
+
+### Step 1: Gather Property Information
+- Collect data on the subject property and comparable properties
+- Do NOT include crime rates or ethnic makeup (Fair Housing Act violation)
+
+### Step 2: Select Comparable Properties
+- Best comps: sold within **6 months**, same neighborhood, similar features
+- Avoid distressed sales (short sales, foreclosures) — not arm's length
+- Pending sales show **listing price**, NOT sales price — unreliable for value
+- Sales over **2 years old** are too outdated
+
+### Step 3: Adjust Comparables
+- **ALWAYS adjust the COMPARABLE, never the subject**
+- **Comp lacks a feature** → ADD value to comp
+- **Comp has an extra feature** → SUBTRACT value from comp
+- **Matched pair technique** — Compare two similar properties with one difference to isolate that feature's value
+- **Square footage technique** — Most commonly used adjustment method
+
+### Step 4: Determine Realistic Selling Price
+- Most reliable comp = the one with the **fewest adjustments**
+- Market sets VALUE, seller sets ASKING PRICE
+- Give seller a **RANGE**, not an exact figure
+- CMA is an opinion of value, NOT an appraisal
+
+## Chapter 3, Section 6: Short Sales, REOs, and the CMA
+
+### Introduction
+- Abundance of distressed properties creates unique CMA challenges
+- **Always prefer non-distressed comps** when possible
+- In heavy distressed markets, those sales become market reality and pull values down
+- Seller must compete in the market that exists, including distressed properties
+- Example: If distressed sales at $150/sqft and listings at $150-$160/sqft, seller can't expect $250/sqft
+
+### Broker Price Opinion (BPO)
+- **BPO** = estimate of value for a **bank-owned (REO) property**
+- Also called an **Automated Valuation Model (AVM)** — submitted by computer
+- **REO** = Real Estate Owned — property obtained through foreclosure, deed in lieu, or short sale
+- **Who can prepare a BPO in Florida:** Anyone with an active **broker, sales associate, or appraisal license**
+- Preparer is entitled to **compensation**
+
+### BPO Report Contents
+- Neighborhood analysis of comparable properties
+- Local and regional market information
+- **Factors affecting price:** values of similar properties, sales trends, amount of repair needed
+- **BPO hierarchy:** Less thorough than an appraisal, but more analysis than a basic CMA
+
+### Outsourcers
+- **Outsourcer** = an **asset management company** that handles the entire REO process from assignment to broker to sale
+- Many lenders turn REO assets over to outsourcers rather than handling them directly
+
+### Why BPOs Matter for Your Career
+- Buyer's market → more distressed owners → more REOs → more need for BPO preparers
+- BPO pay isn't huge, but builds **relationships with lenders** → they trust you to list their REO portfolio → new income stream
+
+## Chapter 3 — Quiz Results
+
+### Section 5 Quiz (6/6 — 100%)
+1. CMA Step 1 info should NOT include crime rates/ethnic makeup → ✅
+2. Adjust the COMPARABLE, not the subject → ✅ (after correction)
+3. 2+ year old sale = too outdated for CMA → ✅
+4. Pending sales show listing price, not sales price → ✅
+5. Comp has extra bath → SUBTRACT from comp → ✅
+6. Best comps = sold within 6 months, same neighborhood → ✅
+
+### Section 6 Quiz (3/4 — 75%)
+1. Who can prepare BPO? All EXCEPT student in class (no active license) → ✅
+2. BPO is sometimes called AVM → ❌ (selected REO instead)
+3. Lender + REO + value estimate = BPO → ✅
+4. Outsourcer = asset management company → ✅
+
+### Chapter 3 Quiz (14 questions — IN PROGRESS)
+1. Matched pair: $375K - $355K = $20K lake lot value → D ✅
+2. Highest and best use ($500K as-is vs $800K improved) → B ✅
+3. Price = total amount paid by buyer → D ✅
+4. Contribution principle ($75K kitchen adds $60K value) → A ✅
+5. Comparable sales approach (similar properties, sold prices) → C ✅
+6. FIRREA Title XI = USPAP → C ✅
+7. Lender + REO = BPO → B ✅
+8. ⚠️ UNANSWERED — needs to go back
+9. Adjust comp: subject 4BR, comp 3BR → add bedroom to comp → C ✅
+10. Appraisers use all EXCEPT AVM → A ✅
+11. Never call CMA an appraisal → B ✅
+12. Substitution = buyer picks lowest price that meets needs → C ✅
+13. Investors + cash flow = income approach → D ✅
+14. Ad valorem = assessed value → B (selected, needs Q8 before submit)
+
+---
+
+# Chapter 4: Prospecting
+
+## Section 1: Prospecting
+
+### Introduction (Slide 1 of 2)
+- **Prospecting** = the process of looking for new business; this process NEVER stops
+- Foundation of your RE business — buyers, sellers, closings, commissions all stem from prospecting
+- Spend a **majority of your time** on prospecting
+- Develop a truly aggressive and consistent prospecting plan
+- **Leverage** social sites to communicate, share, and grow sphere of influence exponentially
+
+### Introduction (Slide 2 of 2)
+**Three keys to prospecting success:**
+1. **Number of contacts** — volume matters
+2. **Consistency of contacts** — regular outreach, not just when you need business
+3. **System for tracking contacts** — CRM or method to follow up
+
+### Your Database (Slide 1 of 2)
+- **Information management** is key to all three prospecting success factors
+- Better data management = more success
+- Contact management software/mobile apps = quick access from any device
+- More automated prospecting = more people reached consistently, less time/effort
+- **CRM** tracks contacts, reminds when to call/email/text, automates some tasks
+- Start with **five categories**, create a separate database for each
+
+### Your Database (Slide 2 of 2)
+**Five prospecting categories (database groups):**
+1. **Sphere of Influence** — people you already know
+2. **Expired Listings** — listings that didn't sell with previous agent
+3. **For Sale By Owner (FSBO)** — owners selling without an agent
+4. **Geographic Farm** — specific neighborhood you target consistently
+5. **Past Clients** — repeat business and referrals
+
+### Sphere of Influence (expanded)
+- Start here FIRST — compile a list of ALL people you know and have interacted with
+- Includes: friends, family, hair stylist, mechanic, doctor, lawyer, accountant, server, bartender, civic orgs, clubs, sporting events, school acquaintances — literally everyone
+- Tip: input **10 people per day** until full list is entered
+- List grows over time — add new people as you meet them
+
+### Sphere of Influence — Prospecting Technique
+- Tell people you're always looking for new business
+- Ask permission to add them to your prospecting list
+- Frame it as: "I'm growing my business and could use your help"
+- Most people **love to help someone they admire and trust**
+- Key: make sure your SOI regards you with trust and admiration
+
+### Expired Listings (Slide 1 of 1)
+- Properties placed on market but **failed to sell**
+- Advantage: you already know asking price, commission, and that they want to sell
+- Sellers are **extremely motivated** — property sat for months
+- **Check MLS daily** for expired listings in your area
+- Enter into your expired listings database
+- Can **automate through MLS home page**
