@@ -42,16 +42,23 @@ echo ""
 echo "Press Ctrl+C to stop early"
 echo ""
 
-# Run agent for 30 seconds
-timeout 30s npm start || {
-    EXIT_CODE=$?
-    if [ $EXIT_CODE -eq 124 ]; then
-        echo ""
-        echo "✅ TEST PASSED - Agent ran successfully for 30 seconds"
-        exit 0
-    else
-        echo ""
-        echo "❌ TEST FAILED - Agent exited with error code $EXIT_CODE"
-        exit 1
-    fi
-}
+# Run agent in background
+npm start &
+AGENT_PID=$!
+
+# Wait 30 seconds
+sleep 30
+
+# Kill agent
+kill $AGENT_PID 2>/dev/null || true
+wait $AGENT_PID 2>/dev/null
+
+EXIT_CODE=$?
+echo ""
+if [ $EXIT_CODE -eq 0 ] || [ $EXIT_CODE -eq 143 ] || [ $EXIT_CODE -eq 130 ]; then
+    echo "✅ TEST PASSED - Agent ran successfully for 30 seconds"
+    exit 0
+else
+    echo "❌ TEST FAILED - Agent exited with error code $EXIT_CODE"
+    exit 1
+fi

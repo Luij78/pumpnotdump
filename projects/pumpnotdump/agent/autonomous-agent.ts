@@ -59,10 +59,11 @@ class AntiRugAgent {
     anchor.setProvider(provider);
     
     // Load program IDL
-    const programId = new PublicKey(PROGRAM_ID);
     const idlPath = path.join(__dirname, "../pumpnotdump/target/idl/pumpnotdump.json");
     const idl = JSON.parse(fs.readFileSync(idlPath, "utf-8"));
-    this.program = new Program(idl, programId, provider);
+    // Override the IDL's program ID with the configured one
+    idl.address = PROGRAM_ID;
+    this.program = new Program(idl, provider);
   }
   
   /**
