@@ -14,8 +14,8 @@ from collections import defaultdict
 sys.stdout.reconfigure(line_buffering=True)
 
 # Telegram
-TELEGRAM_TOKEN = "8277928699:AAFt842BmOnha-QQBDdSPqAfPEjsqWlE3PA"
-TELEGRAM_CHAT_ID = "5601940168"
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 # Files
 LAB_DIR = "/tmp/strategy_lab"
