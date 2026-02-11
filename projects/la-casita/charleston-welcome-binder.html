@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Casita — Guest Welcome Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #2c2c2c;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 14px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: letter;
+    margin: 0.5in;
+  }
+
+  @media print {
+    .page-break { page-break-before: always; }
+    .no-break { page-break-inside: avoid; }
+    body { font-size: 12pt; }
+    .cover { height: 100vh; }
+  }
+
+  /* ─── Cover Page ─── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(165deg, #1a3a4a 0%, #2d5a6b 40%, #4a8a7a 100%);
+    color: white;
+    padding: 80px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 5 L75 40 L40 75 L5 40Z' fill='none' stroke='rgba(255,255,255,0.04)' stroke-width='1'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .cover .casa-icon { font-size: 64px; margin-bottom: 16px; }
+
+  .cover h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 72px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+  }
+
+  .cover .subtitle {
+    font-size: 20px;
+    font-weight: 300;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 12px;
+  }
+
+  .cover .location {
+    font-size: 16px;
+    opacity: 0.7;
+    margin-bottom: 50px;
+  }
+
+  .cover .divider {
+    width: 80px;
+    height: 2px;
+    background: rgba(255,255,255,0.5);
+    margin: 0 auto 50px;
+  }
+
+  .cover .tagline {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-style: italic;
+    opacity: 0.9;
+    max-width: 500px;
+  }
+
+  .cover .wifi-box {
+    margin-top: 60px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 16px;
+    padding: 32px 50px;
+    text-align: center;
+  }
+
+  .cover .wifi-box .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    opacity: 0.7;
+    margin-bottom: 8px;
+  }
+
+  .cover .wifi-box .value {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .cover .wifi-box .wifi-row {
+    display: flex;
+    gap: 50px;
+  }
+
+  /* ─── Content Pages ─── */
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 50px;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-top: 20px;
+  }
+
+  .section-header .icon { font-size: 40px; margin-bottom: 10px; }
+
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 600;
+    color: #1a3a4a;
+    margin-bottom: 8px;
+  }
+
+  .section-header p {
+    font-size: 16px;
+    color: #888;
+    font-weight: 300;
+  }
+
+  .section-divider {
+    width: 50px;
+    height: 2px;
+    background: #4a8a7a;
+    margin: 0 auto 40px;
+  }
+
+  h3.group-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: #1a3a4a;
+    margin-bottom: 20px;
+  }
+
+  /* ─── Place Cards with QR ─── */
+  .place {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    background: #fafaf9;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    page-break-inside: avoid;
+  }
+
+  .place.featured {
+    border-left: 4px solid #4a8a7a;
+    background: #f5faf8;
+  }
+
+  .place.owners-pick {
+    border-left: 4px solid #c4913b;
+    background: #fdf8f0;
+  }
+
+  .place .place-info { flex: 1; }
+
+  .place .place-type {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .place .place-type.green { color: #4a8a7a; }
+  .place .place-type.gold { color: #c4913b; }
+  .place .place-type.blue { color: #3a6a8a; }
+
+  .place .place-name {
+    font-weight: 600;
+    font-size: 18px;
+    color: #1a3a4a;
+    margin-bottom: 4px;
+  }
+
+  .place .place-desc {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .place .place-detail {
+    font-size: 13px;
+    color: #888;
+  }
+
+  .place .place-detail strong { color: #555; }
+
+  .place .qr {
+    flex-shrink: 0;
+    text-align: center;
+  }
+
+  .place .qr img {
+    width: 80px;
+    height: 80px;
+    border-radius: 6px;
+    border: 1px solid #eee;
+  }
+
+  .place .qr .qr-label {
+    font-size: 9px;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* ─── Info Box ─── */
+  .info-box {
+    background: #f0f7f5;
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 28px;
+    page-break-inside: avoid;
+  }
+
+  .info-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: #1a3a4a;
+    margin-bottom: 12px;
+  }
+
+  .info-box p, .info-box li {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.8;
+  }
+
+  .info-box ul { list-style: none; padding: 0; }
+  .info-box ul li::before {
+    content: '→ ';
+    color: #4a8a7a;
+    font-weight: 600;
+  }
+
+  /* ─── Essential Grid ─── */
+  .essential-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 30px;
+  }
+
+  .essential-item {
+    background: #fafaf9;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 18px 22px;
+    page-break-inside: avoid;
+  }
+
+  .essential-item .e-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #999;
+    margin-bottom: 6px;
+  }
+
+  .essential-item .e-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c2c2c;
+  }
+
+  .essential-item .e-sub {
+    font-size: 13px;
+    color: #888;
+    margin-top: 2px;
+  }
+
+  /* ─── House Rules ─── */
+  .rules-list { list-style: none; padding: 0; }
+
+  .rules-list li {
+    padding: 14px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 15px;
+    color: #444;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .rules-list li:last-child { border-bottom: none; }
+  .rules-list .rule-icon { font-size: 20px; flex-shrink: 0; }
+
+  /* ─── Footer ─── */
+  .binder-footer {
+    text-align: center;
+    padding: 50px;
+    color: #bbb;
+    font-size: 13px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  /* ─── Downtown list ─── */
+  .downtown-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .downtown-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 15px;
+    color: #444;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .downtown-list li:last-child { border-bottom: none; }
+  .downtown-list .dt-icon { flex-shrink: 0; }
+  .downtown-list strong { color: #1a3a4a; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════ COVER PAGE ════════════════ -->
+<div class="cover">
+  <div class="casa-icon">🏡</div>
+  <h1>La Casita</h1>
+  <div class="subtitle">Guest Welcome Guide</div>
+  <div class="location">West Ashley · Charleston, South Carolina</div>
+  <div class="divider"></div>
+  <p class="tagline">Your home away from home in the Lowcountry.</p>
+
+  <div class="wifi-box">
+    <div class="wifi-row">
+      <div>
+        <div class="label">WiFi Network</div>
+        <div class="value">_______________</div>
+      </div>
+      <div>
+        <div class="label">Password</div>
+        <div class="value">_______________</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ WHERE TO EAT ════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="icon">🍽</div>
+    <h2>Where to Eat</h2>
+    <p>Local favorites handpicked by your host — scan the QR to navigate</p>
+  </div>
+  <div class="section-divider"></div>
+
+  <!-- Owner's Pick -->
+  <h3 class="group-title">⭐ La Casita Owner's Favorite</h3>
+
+  <div class="place owners-pick no-break">
+    <div class="place-info">
+      <div class="place-type gold">Owner's Pick · Mexican</div>
+      <div class="place-name">Señor Tequila</div>
+      <div class="place-desc">Our absolute favorite. Authentic Mexican food with generous portions, endless chips and salsa, great margaritas, and fast, friendly service. The kids menu is solid too. You won't leave hungry.</div>
+      <div class="place-detail"><strong>📍</strong> 1836 Ashley River Rd · Mon–Thu 11a–10p, Fri–Sun 11a–10:30p · <strong>📞</strong> (843) 852-0561</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Senor+Tequila+1836+Ashley+River+Rd+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <h3 class="group-title" style="margin-top: 32px;">🥇 Don't-Miss Spots</h3>
+
+  <div class="place featured no-break">
+    <div class="place-info">
+      <div class="place-type green">Southern · Lowcountry</div>
+      <div class="place-name">The Glass Onion</div>
+      <div class="place-desc">Neighborhood favorite since 2008. Fine-dining quality in a casual atmosphere. The shrimp & grits, fried catfish with red rice, and gumbo are legendary.</div>
+      <div class="place-detail"><strong>📍</strong> 1219 Savannah Hwy · Mon–Sat 11a–9p</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=The+Glass+Onion+1219+Savannah+Hwy+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place featured no-break">
+    <div class="place-info">
+      <div class="place-type green">BBQ · Smokehouse</div>
+      <div class="place-name">Home Team BBQ</div>
+      <div class="place-desc">Where Charleston's BBQ empire started. Wood-smoked pulled pork, ribs, and a salt-and-pepper brisket that's worth the trip alone. Great outdoor patio.</div>
+      <div class="place-detail"><strong>📍</strong> 1205 Ashley River Rd · Daily 11a–12a</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Home+Team+BBQ+1205+Ashley+River+Rd+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place featured no-break">
+    <div class="place-info">
+      <div class="place-type green">Seafood · Oyster Bar</div>
+      <div class="place-name">Pearlz Little Oyster Bar</div>
+      <div class="place-desc">Eclectic oyster bar with the freshest seafood around. A favorite happy hour spot for locals and visitors alike.</div>
+      <div class="place-detail"><strong>📍</strong> Savannah Hwy, Avondale</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Pearlz+Little+Oyster+Bar+Avondale+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place featured no-break">
+    <div class="place-info">
+      <div class="place-type green">Breakfast · Brunch</div>
+      <div class="place-name">Early Bird Diner</div>
+      <div class="place-desc">Famous pecan-fried chicken and waffles. Pro tip: pour syrup over everything and dip the chicken-waffle combo into honey mustard. Trust us.</div>
+      <div class="place-detail"><strong>📍</strong> 1644 Savannah Hwy · Daily 8a–2p</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Early+Bird+Diner+1644+Savannah+Hwy+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ MORE RESTAURANTS ════════════════ -->
+<div class="page page-break">
+  <h3 class="group-title">🍴 More Great Spots</h3>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">Sandwiches</div>
+      <div class="place-name">Boxcar Betty's</div>
+      <div class="place-desc">Custom fried chicken sandwiches. Try "The Boxcar" with pimiento cheese, peach slaw, pickles, and spicy mayo.</div>
+      <div class="place-detail"><strong>📍</strong> 1922 Savannah Hwy · Daily 11a–8p</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Boxcar+Bettys+1922+Savannah+Hwy+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">Mexican</div>
+      <div class="place-name">Mex 1 Coastal Cantina</div>
+      <div class="place-desc">Tacos, burritos, and margaritas with a beachy Charleston vibe. Great for a casual dinner or lunch.</div>
+      <div class="place-detail"><strong>📍</strong> Savannah Hwy</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Mex+1+Coastal+Cantina+West+Ashley+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">Wine Bar · Charcuterie</div>
+      <div class="place-name">Avondale Wine & Cheese</div>
+      <div class="place-desc">Voted Best Wine Bar. Build your own charcuterie board and let the knowledgeable staff pair your wine.</div>
+      <div class="place-detail"><strong>📍</strong> 813 Savannah Hwy · Thurs–Sat 12–9p</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Avondale+Wine+and+Cheese+813+Savannah+Hwy+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">Pub · 70+ Years</div>
+      <div class="place-name">Gene's Haufbrau</div>
+      <div class="place-desc">A West Ashley institution for 70+ years. One of the largest beer selections in town. Ask about the daily blue plate specials.</div>
+      <div class="place-detail"><strong>📍</strong> 817 Savannah Hwy · Daily 11:30a–2a</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Genes+Haufbrau+817+Savannah+Hwy+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">Steakhouse</div>
+      <div class="place-name">17 Prime Steakhouse</div>
+      <div class="place-desc">Upscale steaks and seafood for a special night out. Great ambiance and exceptional cuts. Reservations recommended.</div>
+      <div class="place-detail"><strong>📍</strong> Sam Rittenberg Blvd</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=17+Prime+Steakhouse+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">Chinese · Authentic</div>
+      <div class="place-name">Old Li's</div>
+      <div class="place-desc">Not your typical Chinese takeout. Adventurous, authentic dishes you won't find elsewhere in Charleston.</div>
+      <div class="place-detail"><strong>📍</strong> West Ashley</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Old+Lis+Chinese+West+Ashley+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">Thai · Vietnamese</div>
+      <div class="place-name">Pho & Pad Thai</div>
+      <div class="place-desc">Simple name, excellent food. A local go-to for comforting Vietnamese and Thai dishes.</div>
+      <div class="place-detail"><strong>📍</strong> West Ashley</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Pho+and+Pad+Thai+West+Ashley+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">Steaks · River View</div>
+      <div class="place-name">California Dreaming</div>
+      <div class="place-desc">Floor-to-ceiling windows with stunning views of the Ashley River. Great steaks, seafood, and salads. Perfect for a lively evening out.</div>
+      <div class="place-detail"><strong>📍</strong> Ashley River Rd</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=California+Dreaming+Ashley+River+Rd+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="info-box" style="margin-top: 20px;">
+    <h3>💡 Dining Tips from Your Host</h3>
+    <ul>
+      <li><strong>Avondale</strong> is the walkable neighborhood hub — restaurants, bars, and shops along Savannah Hwy</li>
+      <li>Reservations recommended for Glass Onion and 17 Prime on weekends</li>
+      <li>Home Team BBQ gets packed on Saturdays — go early or try weekday lunch</li>
+      <li>For downtown fine dining (15 min), head to King Street or East Bay Street</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ════════════════ THINGS TO DO ════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="icon">🌿</div>
+    <h2>Things to Do</h2>
+    <p>History, nature, beaches, and hidden gems — scan any QR to navigate</p>
+  </div>
+  <div class="section-divider"></div>
+
+  <h3 class="group-title">🌳 Must-See Attractions</h3>
+
+  <div class="place featured no-break">
+    <div class="place-info">
+      <div class="place-type green">Natural Wonder · Free</div>
+      <div class="place-name">Angel Oak Tree</div>
+      <div class="place-desc">One of the oldest living things east of the Mississippi. Estimated 300-400 years old, standing 65 feet tall with branches spanning 187 feet. Free admission. An absolute must-see while you're here.</div>
+      <div class="place-detail"><strong>📍</strong> 3688 Angel Oak Rd, Johns Island · Mon–Sat 9a–5p, Sun 1–5p · <strong>15 min drive</strong></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Angel+Oak+Tree+3688+Angel+Oak+Rd+Johns+Island+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place featured no-break">
+    <div class="place-info">
+      <div class="place-type green">Plantation · Gardens</div>
+      <div class="place-name">Magnolia Plantation & Gardens</div>
+      <div class="place-desc">America's oldest public gardens (est. 1676). Romantic gardens, nature trails, a petting zoo, and boat tours through blackwater swamps.</div>
+      <div class="place-detail"><strong>📍</strong> 3550 Ashley River Rd · <strong>15 min drive</strong></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Magnolia+Plantation+and+Gardens+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place featured no-break">
+    <div class="place-info">
+      <div class="place-type green">Plantation · History</div>
+      <div class="place-name">Middleton Place</div>
+      <div class="place-desc">National Historic Landmark with America's oldest landscaped gardens. House museum, stableyards, and an excellent on-site restaurant.</div>
+      <div class="place-detail"><strong>📍</strong> 4300 Ashley River Rd · <strong>20 min drive</strong></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Middleton+Place+4300+Ashley+River+Rd+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">Historic · Preserved</div>
+      <div class="place-name">Drayton Hall</div>
+      <div class="place-desc">The oldest preserved plantation house in America (1738). Unfurnished and hauntingly beautiful. A real window into Charleston's history.</div>
+      <div class="place-detail"><strong>📍</strong> 3380 Ashley River Rd · <strong>15 min drive</strong></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Drayton+Hall+3380+Ashley+River+Rd+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">State Park · Nature</div>
+      <div class="place-name">Charles Towne Landing</div>
+      <div class="place-desc">664-acre park where English settlers first landed in 1670. Majestic oaks, a replica 17th-century ship, animal habitats, and walking trails.</div>
+      <div class="place-detail"><strong>📍</strong> 1500 Old Towne Rd · <strong>10 min drive</strong></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Charles+Towne+Landing+1500+Old+Towne+Rd+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">Trail · Outdoor · Free</div>
+      <div class="place-name">West Ashley Greenway</div>
+      <div class="place-desc">A 10-mile paved trail perfect for walking, jogging, or biking through leafy West Ashley. Runs parallel to Savannah Hwy with multiple access points.</div>
+      <div class="place-detail"><strong>📍</strong> Multiple access points · <strong>Free</strong></div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=West+Ashley+Greenway+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ BEACHES ════════════════ -->
+<div class="page page-break">
+  <h3 class="group-title">🏖 Beaches</h3>
+
+  <div class="place featured no-break">
+    <div class="place-info">
+      <div class="place-type blue">Beach · 20 Min Drive</div>
+      <div class="place-name">Folly Beach</div>
+      <div class="place-desc">Charleston's beach town. Six miles of sand, great waves, beach bars, and a laid-back surfer vibe. From La Casita, you're closer than most visitors — about 20 minutes by car.</div>
+      <div class="place-detail">
+        <strong>🅿️ Parking Tips:</strong> Arrive before 10am for easy parking. Metered street parking available. For guaranteed spots, drive to <strong>Folly Beach County Park</strong> at the south end ($15/car). Walk past the gate toward Morris Island Lighthouse for stunning views.
+      </div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Folly+Beach+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type blue">Beach · 30 Min Drive</div>
+      <div class="place-name">Isle of Palms</div>
+      <div class="place-desc">Wide sandy beach on the other side of Charleston. More family-oriented and slightly less crowded than Folly. Great for kids.</div>
+      <div class="place-detail"><strong>📍</strong> Via I-526 and US-17 N</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Isle+of+Palms+Beach+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type blue">Beach · 40 Min Drive</div>
+      <div class="place-name">Kiawah Beachwalker Park</div>
+      <div class="place-desc">Consistently rated one of America's best beaches. Pristine, uncrowded, and nature-oriented. Worth the drive for a special day.</div>
+      <div class="place-detail"><strong>📍</strong> Kiawah Island</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Kiawah+Beachwalker+Park+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <h3 class="group-title" style="margin-top: 40px;">🏙 Downtown Charleston <span style="font-weight: 300; font-size: 16px; color: #888;">(15 min drive)</span></h3>
+
+  <div class="info-box">
+    <p style="margin-bottom: 12px;">Historic downtown is just across the Ashley River. Here are the highlights:</p>
+    <ul class="downtown-list" style="list-style: none; padding: 0;">
+      <li><span class="dt-icon">🛍</span> <strong>King Street</strong> — Charleston's main shopping and dining strip. Boutiques, galleries, and restaurants for miles.</li>
+      <li><span class="dt-icon">🌅</span> <strong>The Battery & White Point Garden</strong> — Waterfront promenade lined with antebellum mansions. Stunning at sunset.</li>
+      <li><span class="dt-icon">🏠</span> <strong>Rainbow Row</strong> — Iconic pastel-colored houses on East Bay Street. The most photographed spot in Charleston.</li>
+      <li><span class="dt-icon">🧺</span> <strong>City Market</strong> — Outdoor market with local crafts, sweetgrass baskets, and unique souvenirs.</li>
+      <li><span class="dt-icon">⛲</span> <strong>Waterfront Park</strong> — The famous Pineapple Fountain, harbor views, and a perfect sunset walk.</li>
+      <li><span class="dt-icon">🐢</span> <strong>South Carolina Aquarium</strong> — Great for families, right on the harbor.</li>
+      <li><span class="dt-icon">🏰</span> <strong>Fort Sumter</strong> — Where the Civil War began. Take the ferry from Liberty Square.</li>
+    </ul>
+  </div>
+
+  <div class="place no-break" style="margin-top: 8px;">
+    <div class="place-info">
+      <div class="place-type blue">Scan for Downtown</div>
+      <div class="place-name">Downtown Charleston</div>
+      <div class="place-desc">Get directions to the heart of historic downtown.</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Downtown+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ SHOPPING & ESSENTIALS ════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="icon">🛒</div>
+    <h2>Shopping & Essentials</h2>
+    <p>Everything you need, close to La Casita</p>
+  </div>
+  <div class="section-divider"></div>
+
+  <h3 class="group-title">🥫 Grocery & Pharmacy</h3>
+
+  <div class="essential-grid">
+    <div class="essential-item">
+      <div class="e-label">Grocery</div>
+      <div class="e-value">Walmart Supercenter</div>
+      <div class="e-sub">3951 W Ashley Circle · 6a–11p</div>
+    </div>
+    <div class="essential-item">
+      <div class="e-label">Grocery</div>
+      <div class="e-value">Publix</div>
+      <div class="e-sub">Multiple locations on Savannah Hwy</div>
+    </div>
+    <div class="essential-item">
+      <div class="e-label">Grocery · Bulk</div>
+      <div class="e-value">Costco</div>
+      <div class="e-sub">3050 Ashley Town Center Dr</div>
+    </div>
+    <div class="essential-item">
+      <div class="e-label">Grocery</div>
+      <div class="e-value">Harris Teeter</div>
+      <div class="e-sub">Ashley River Rd area</div>
+    </div>
+    <div class="essential-item">
+      <div class="e-label">Pharmacy</div>
+      <div class="e-value">CVS Pharmacy</div>
+      <div class="e-sub">Sam Rittenberg Blvd</div>
+    </div>
+    <div class="essential-item">
+      <div class="e-label">Pharmacy</div>
+      <div class="e-value">Walgreens</div>
+      <div class="e-sub">1925 Ashley River Rd</div>
+    </div>
+  </div>
+
+  <h3 class="group-title">🛍 Local Shopping</h3>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">Local Gifts</div>
+      <div class="place-name">Pluff Mud Mercantile</div>
+      <div class="place-desc">Charleston-made goods and Lowcountry souvenirs. Perfect for take-home gifts.</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Pluff+Mud+Mercantile+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">Handmade Soap · Skincare</div>
+      <div class="place-name">Old Whaling Company</div>
+      <div class="place-desc">Handmade soaps and body products made right here in Charleston. Great souvenir.</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Old+Whaling+Company+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <h3 class="group-title" style="margin-top: 24px;">🍸 Fun & Nightlife</h3>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">Speakeasy</div>
+      <div class="place-name">Scotty Doesn't Know</div>
+      <div class="place-desc">Hidden speakeasy bar. Find the entrance and enjoy craft cocktails in a cozy, mysterious setting.</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Scotty+Doesnt+Know+Speakeasy+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+
+  <div class="place no-break">
+    <div class="place-info">
+      <div class="place-type green">Arcade Bar</div>
+      <div class="place-name">Pinky & Clyde's Arcade Bar</div>
+      <div class="place-desc">Retro arcade games, pinball machines, and drinks. A fun night out for all ages (of legal drinking age).</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://maps.google.com/?q=Pinky+and+Clydes+Arcade+Bar+Charleston+SC" alt="QR">
+      <div class="qr-label">Scan for map</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ HOUSE GUIDE ════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="icon">🏡</div>
+    <h2>House Guide</h2>
+    <p>Important info for a comfortable stay at La Casita</p>
+  </div>
+  <div class="section-divider"></div>
+
+  <h3 class="group-title">🚨 Emergency & Medical</h3>
+
+  <div class="essential-grid">
+    <div class="essential-item">
+      <div class="e-label">Emergency</div>
+      <div class="e-value">911</div>
+      <div class="e-sub">Police, Fire, Ambulance</div>
+    </div>
+    <div class="essential-item">
+      <div class="e-label">Non-Emergency Police</div>
+      <div class="e-value">(843) 743-7200</div>
+      <div class="e-sub">Charleston PD</div>
+    </div>
+    <div class="essential-item">
+      <div class="e-label">Nearest Hospital</div>
+      <div class="e-value">Bon Secours St. Francis</div>
+      <div class="e-sub">2095 Henry Tecklenburg Dr</div>
+    </div>
+    <div class="essential-item">
+      <div class="e-label">Urgent Care</div>
+      <div class="e-value">Doctors Care</div>
+      <div class="e-sub">Sam Rittenberg Blvd area</div>
+    </div>
+  </div>
+
+  <h3 class="group-title">📋 House Rules</h3>
+
+  <ul class="rules-list">
+    <li><span class="rule-icon">🔑</span> <strong>Check-in:</strong> _____ PM &nbsp;·&nbsp; <strong>Check-out:</strong> _____ AM</li>
+    <li><span class="rule-icon">🚭</span> No smoking inside the property. Outdoor designated area available.</li>
+    <li><span class="rule-icon">🔊</span> Quiet hours: 10 PM – 8 AM. Please be mindful of our neighbors.</li>
+    <li><span class="rule-icon">🗑</span> Trash goes in bins at _________. Pickup day: _________.</li>
+    <li><span class="rule-icon">🚪</span> Please lock all doors when you leave and at night.</li>
+    <li><span class="rule-icon">🅿️</span> Parking: _________.</li>
+    <li><span class="rule-icon">♨️</span> Thermostat: Feel free to adjust. Please set to ___° when leaving.</li>
+    <li><span class="rule-icon">🐾</span> Pets: _____ (allowed / not allowed)</li>
+    <li><span class="rule-icon">👥</span> Max occupancy: _____ guests</li>
+  </ul>
+
+  <div class="info-box" style="margin-top: 30px;">
+    <h3>📱 Your Host</h3>
+    <p style="margin-bottom: 12px;">If you need anything during your stay, don't hesitate to reach out:</p>
+    <ul>
+      <li><strong>Name:</strong> _______________</li>
+      <li><strong>Phone:</strong> _______________</li>
+      <li><strong>Email:</strong> _______________</li>
+    </ul>
+    <p style="margin-top: 16px; font-style: italic; font-size: 15px;">We want you to have an amazing stay. Welcome to La Casita!</p>
+  </div>
+
+  <div class="info-box">
+    <h3>🧹 Before You Leave</h3>
+    <ul>
+      <li>Start the dishwasher if it's full</li>
+      <li>Strip beds and leave linens in a pile</li>
+      <li>Take out any trash</li>
+      <li>Turn off all lights and fans</li>
+      <li>Lock all doors and return keys to _________</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ════════════════ FOOTER ════════════════ -->
+<div class="binder-footer">
+  <p style="font-family: 'Playfair Display', serif; font-size: 20px; color: #1a3a4a; margin-bottom: 6px;">Thank you for choosing La Casita.</p>
+  <p style="font-size: 15px; color: #999;">Enjoy the Lowcountry. 🌴</p>
+</div>
+
+</body>
+</html>

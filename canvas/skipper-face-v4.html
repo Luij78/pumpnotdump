@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKIPPER — Your AI Captain</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(180deg, #1a1a3a 0%, #2d2d5a 50%, #1e1e4a 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+        
+        /* Sparkle stars */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+        
+        .star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+        
+        /* Gentle waves */
+        .ocean {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            overflow: hidden;
+        }
+        
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 80px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath fill='rgba(100, 150, 255, 0.3)' d='M0,60 C150,90 350,30 600,60 C850,90 1050,30 1200,60 L1200,120 L0,120 Z'/%3E%3C/svg%3E") repeat-x;
+            animation: gentleWave 6s ease-in-out infinite;
+        }
+        
+        @keyframes gentleWave {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-25%); }
+        }
+        
+        /* Main container */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        /* CUTE PIRATE CHARACTER */
+        .pirate {
+            position: relative;
+            width: 280px;
+            height: 300px;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Cool bandana */
+        .bandana {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 50px;
+            background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%);
+            border-radius: 100px 100px 20px 20px;
+            z-index: 3;
+        }
+        
+        .bandana::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+        }
+        
+        /* Bandana tail */
+        .bandana-tail {
+            position: absolute;
+            top: 35px;
+            right: 25px;
+            width: 50px;
+            height: 60px;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            border-radius: 0 0 30px 30px;
+            transform: rotate(25deg);
+            z-index: 2;
+            animation: tailWave 2s ease-in-out infinite;
+        }
+        
+        @keyframes tailWave {
+            0%, 100% { transform: rotate(25deg); }
+            50% { transform: rotate(35deg); }
+        }
+        
+        /* BIG CUTE FACE */
+        .face {
+            position: absolute;
+            top: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(180deg, #ffd9b3 0%, #ffcc99 100%);
+            border-radius: 50%;
+            z-index: 4;
+            box-shadow: 
+                inset -10px -10px 30px rgba(0,0,0,0.1),
+                0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        /* Rosy cheeks */
+        .cheek {
+            position: absolute;
+            width: 35px;
+            height: 20px;
+            background: rgba(255, 150, 150, 0.5);
+            border-radius: 50%;
+            top: 115px;
+        }
+        
+        .cheek.left { left: 20px; }
+        .cheek.right { right: 20px; }
+        
+        /* BIG EXPRESSIVE EYES */
+        .eyes {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 40px;
+        }
+        
+        .eye {
+            width: 50px;
+            height: 55px;
+            background: white;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 
+                inset 0 -5px 15px rgba(0,0,0,0.1),
+                0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .iris {
+            position: absolute;
+            width: 30px;
+            height: 32px;
+            background: radial-gradient(circle at 40% 40%, #5d4e37 0%, #3d2e17 100%);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -45%);
+            transition: all 0.3s ease;
+        }
+        
+        .pupil {
+            position: absolute;
+            width: 16px;
+            height: 18px;
+            background: #0a0a0a;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Sparkle in eye */
+        .sparkle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            top: 8px;
+            right: 8px;
+        }
+        
+        .sparkle.small {
+            width: 5px;
+            height: 5px;
+            top: 22px;
+            right: 5px;
+        }
+        
+        /* Cool eyepatch */
+        .eyepatch {
+            position: absolute;
+            top: 70px;
+            right: 50px;
+            width: 55px;
+            height: 50px;
+            background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+            border-radius: 50%;
+            z-index: 5;
+            border: 3px solid #d4af37;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+        
+        .eyepatch::before {
+            content: '⚓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+        }
+        
+        .eyepatch-strap {
+            position: absolute;
+            top: 85px;
+            left: 10px;
+            right: 10px;
+            height: 6px;
+            background: linear-gradient(90deg, transparent, #333 20%, #333 80%, transparent);
+            z-index: 3;
+        }
+        
+        /* Happy eyebrows */
+        .eyebrow {
+            position: absolute;
+            top: 55px;
+            width: 40px;
+            height: 8px;
+            background: #5d4037;
+            border-radius: 10px;
+        }
+        
+        .eyebrow.left {
+            left: 35px;
+            transform: rotate(-5deg);
+        }
+        
+        .eyebrow.right {
+            right: 35px;
+            transform: rotate(5deg);
+        }
+        
+        /* Cute nose */
+        .nose {
+            position: absolute;
+            top: 115px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 25px;
+            background: #f0bc8a;
+            border-radius: 50%;
+        }
+        
+        /* BIG FRIENDLY SMILE */
+        .mouth {
+            position: absolute;
+            top: 145px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 35px;
+            background: #1a1a1a;
+            border-radius: 0 0 50px 50px;
+            overflow: hidden;
+        }
+        
+        .teeth {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 55px;
+            height: 12px;
+            background: white;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .tooth-gold {
+            position: absolute;
+            top: 0;
+            right: 8px;
+            width: 10px;
+            height: 12px;
+            background: linear-gradient(180deg, #ffd700 0%, #daa520 100%);
+            border-radius: 0 0 3px 3px;
+        }
+        
+        .tongue {
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 18px;
+            background: #ff6b6b;
+            border-radius: 50%;
+        }
+        
+        /* Cool goatee */
+        .goatee {
+            position: absolute;
+            top: 175px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 35px;
+            background: #3d2817;
+            border-radius: 0 0 20px 20px;
+            z-index: 3;
+        }
+        
+        /* Earring */
+        .earring {
+            position: absolute;
+            top: 120px;
+            left: 5px;
+            width: 15px;
+            height: 20px;
+            border: 4px solid #ffd700;
+            border-radius: 50%;
+            border-top: none;
+        }
+        
+        /* Status panel */
+        .panel {
+            margin-top: 20px;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.2);
+            text-align: center;
+        }
+        
+        .name {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 3px;
+        }
+        
+        .tagline {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            margin-top: 5px;
+            letter-spacing: 2px;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+        }
+        
+        .status-text {
+            font-size: 16px;
+            color: white;
+            font-weight: 500;
+        }
+        
+        .activity {
+            margin-top: 10px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        /* Crew */
+        .crew {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .crew-member {
+            padding: 12px 18px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .crew-icon { font-size: 24px; }
+        .crew-name { font-size: 11px; color: #ffd700; margin-top: 5px; }
+        .crew-task { font-size: 10px; color: rgba(255,255,255,0.5); }
+        
+        /* ANIMATIONS */
+        .working .iris {
+            animation: lookAround 2s ease-in-out infinite;
+        }
+        
+        @keyframes lookAround {
+            0%, 100% { transform: translate(-50%, -45%); }
+            25% { transform: translate(-30%, -45%); }
+            75% { transform: translate(-70%, -45%); }
+        }
+        
+        .working .eyebrow.left { animation: wiggleL 0.5s ease-in-out infinite; }
+        .working .eyebrow.right { animation: wiggleR 0.5s ease-in-out infinite; }
+        
+        @keyframes wiggleL {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(-15deg); }
+        }
+        
+        @keyframes wiggleR {
+            0%, 100% { transform: rotate(5deg); }
+            50% { transform: rotate(15deg); }
+        }
+        
+        .working .status-dot { background: #fbbf24; }
+        
+        .thinking .iris {
+            animation: thinkLook 3s ease-in-out infinite;
+        }
+        
+        @keyframes thinkLook {
+            0%, 100% { transform: translate(-50%, -45%); }
+            50% { transform: translate(-50%, -65%); }
+        }
+        
+        .thinking .mouth {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+        }
+        
+        .thinking .teeth, .thinking .tongue { display: none; }
+        .thinking .status-dot { background: #a78bfa; }
+        
+        .sleeping .eye { height: 8px; }
+        .sleeping .iris, .sleeping .sparkle { display: none; }
+        .sleeping .mouth {
+            width: 40px;
+            height: 20px;
+            border-radius: 50%;
+            background: #333;
+        }
+        .sleeping .teeth, .sleeping .tongue { display: none; }
+        .sleeping .status-dot { background: #60a5fa; animation: none; }
+        
+        /* Time */
+        .time {
+            position: fixed;
+            top: 15px;
+            right: 20px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="ocean"><div class="wave"></div></div>
+    
+    <div class="time" id="time"></div>
+    
+    <div class="container" id="mainContainer">
+        <div class="pirate">
+            <div class="bandana"></div>
+            <div class="bandana-tail"></div>
+            <div class="eyepatch-strap"></div>
+            
+            <div class="face">
+                <div class="cheek left"></div>
+                <div class="cheek right"></div>
+                <div class="eyebrow left"></div>
+                <div class="eyebrow right"></div>
+                <div class="eyes">
+                    <div class="eye">
+                        <div class="iris">
+                            <div class="pupil"></div>
+                        </div>
+                        <div class="sparkle"></div>
+                        <div class="sparkle small"></div>
+                    </div>
+                </div>
+                <div class="eyepatch"></div>
+                <div class="earring"></div>
+                <div class="nose"></div>
+                <div class="mouth">
+                    <div class="teeth"><div class="tooth-gold"></div></div>
+                    <div class="tongue"></div>
+                </div>
+                <div class="goatee"></div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <div class="name">⚓ SKIPPER</div>
+            <div class="tagline">Your AI Captain</div>
+            <div class="status">
+                <div class="status-dot"></div>
+                <span class="status-text" id="statusText">Ready to Roll!</span>
+            </div>
+            <div class="activity" id="activity">What adventure awaits today? 🏴‍☠️</div>
+        </div>
+        
+        <div class="crew" id="subAgents"></div>
+    </div>
+
+    <script>
+        // Stars
+        const stars = document.getElementById('stars');
+        for (let i = 0; i < 40; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 70 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            stars.appendChild(star);
+        }
+        
+        // Time
+        function updateTime() {
+            document.getElementById('time').textContent = new Date().toLocaleTimeString('en-US', {
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        const mainContainer = document.getElementById('mainContainer');
+        const statusText = document.getElementById('statusText');
+        const activity = document.getElementById('activity');
+        const subAgents = document.getElementById('subAgents');
+        
+        const states = {
+            idle: 'Ready to Roll!',
+            working: 'On It, Captain!',
+            thinking: 'Hmm...',
+            sleeping: 'Zzz...'
+        };
+        
+        let lastState = null;
+        
+        function setState(state) {
+            mainContainer.classList.remove('idle', 'working', 'thinking', 'sleeping');
+            mainContainer.classList.add(state);
+            statusText.textContent = states[state] || 'Ready!';
+        }
+        
+        function renderCrew(agents) {
+            if (!agents?.length) { subAgents.innerHTML = ''; return; }
+            subAgents.innerHTML = agents.map(a => `
+                <div class="crew-member">
+                    <div class="crew-icon">${a.icon || '🏴‍☠️'}</div>
+                    <div class="crew-name">${a.name || 'Crew'}</div>
+                    <div class="crew-task">${a.task || ''}</div>
+                </div>
+            `).join('');
+        }
+        
+        async function fetchState() {
+            try {
+                const res = await fetch('/skipper-state.json?t=' + Date.now());
+                const data = await res.json();
+                const key = JSON.stringify(data);
+                if (key !== lastState) {
+                    lastState = key;
+                    setState(data.state || 'idle');
+                    activity.textContent = data.activity || 'What adventure awaits today? 🏴‍☠️';
+                    renderCrew(data.subAgents);
+                }
+            } catch(e) {}
+        }
+        
+        setInterval(fetchState, 2000);
+        fetchState();
+    </script>
+</body>
+</html>

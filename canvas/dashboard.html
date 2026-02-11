@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skipper Dashboard ⚓</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      color: #fff;
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .header h1 { font-size: 28px; display: flex; align-items: center; gap: 12px; }
+    .header .time { opacity: 0.7; font-size: 14px; }
+    
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .stat-card .label { font-size: 12px; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
+    .stat-card .value { font-size: 32px; font-weight: 700; margin-top: 4px; }
+    .stat-card.green .value { color: #4ade80; }
+    .stat-card.yellow .value { color: #fbbf24; }
+    .stat-card.blue .value { color: #60a5fa; }
+    .stat-card.purple .value { color: #a78bfa; }
+
+    /* Token Usage Section */
+    .token-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .token-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .token-card .task-name { font-size: 13px; font-weight: 600; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .token-card .token-count { font-size: 22px; font-weight: 700; color: #f472b6; }
+    .token-card .token-cost { font-size: 11px; opacity: 0.6; margin-top: 4px; }
+    .token-card .token-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+    .token-card .token-bar-fill { height: 100%; background: linear-gradient(90deg, #f472b6, #a78bfa); border-radius: 2px; }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 24px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .kanban {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kanban-column {
+      background: rgba(0,0,0,0.2);
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .kanban-column h3 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.7;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .kanban-column h3 .count {
+      background: rgba(255,255,255,0.2);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    .task-card {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+    .task-card .title { font-weight: 600; font-size: 14px; }
+    .task-card .meta { font-size: 11px; opacity: 0.6; margin-top: 6px; }
+    .task-card.priority-high { border-left: 3px solid #ef4444; }
+    .task-card.priority-medium { border-left: 3px solid #f59e0b; }
+    .task-card.priority-low { border-left: 3px solid #22c55e; }
+    /* Style B: Bottom progress fill */
+    .task-card.style-b {
+      position: relative;
+      overflow: hidden;
+    }
+    .task-card.style-b::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 33%;
+      background: linear-gradient(90deg, #4ade80, #22d3ee);
+      z-index: 0;
+      border-radius: 0 0 8px 8px;
+    }
+    .task-card.style-b .title,
+    .task-card.style-b .meta,
+    .task-card.style-b .style-label { position: relative; z-index: 1; }
+    .task-card.style-b .progress-pct {
+      position: absolute;
+      bottom: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+      z-index: 2;
+    }
+    
+    .cron-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 12px;
+    }
+    .cron-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cron-card .info h4 { font-size: 15px; font-weight: 600; }
+    .cron-card .info .schedule { font-size: 12px; opacity: 0.6; margin-top: 2px; }
+    .cron-card .status {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .cron-card .status.ok { background: rgba(34,197,94,0.2); color: #4ade80; }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .project-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .project-card h4 { font-size: 16px; margin-bottom: 8px; }
+    .project-card .desc { font-size: 13px; opacity: 0.7; margin-bottom: 12px; }
+    .project-card .progress-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .project-card .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4ade80, #22d3ee);
+      border-radius: 3px;
+    }
+    .project-card .progress-text { font-size: 11px; opacity: 0.6; margin-top: 6px; }
+
+    .footer {
+      margin-top: 32px;
+      text-align: center;
+      opacity: 0.5;
+      font-size: 12px;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 16px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 24px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.2); }
+    .modal h2 { font-size: 24px; margin-bottom: 8px; }
+    .modal .target-date { color: #22d3ee; font-size: 14px; margin-bottom: 16px; }
+    .modal .overview { 
+      background: rgba(255,255,255,0.05); 
+      border-radius: 8px; 
+      padding: 16px; 
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .modal .overview h3 { font-size: 14px; opacity: 0.6; margin-bottom: 8px; text-transform: uppercase; }
+    .modal .checklist { margin-top: 16px; }
+    .modal .checklist h3 { font-size: 14px; opacity: 0.6; margin-bottom: 12px; text-transform: uppercase; }
+    .modal .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .modal .checklist-item:last-child { border-bottom: none; }
+    .modal .checklist-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+    .modal .checklist-item label { font-size: 14px; cursor: pointer; }
+    .modal .checklist-item.done label { opacity: 0.5; text-decoration: line-through; }
+    .project-card.clickable { cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; -webkit-tap-highlight-color: rgba(255,255,255,0.1); }
+    .project-card.clickable:hover, .project-card.clickable:active { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    @media (pointer: coarse) { .project-card.clickable { cursor: default; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>⚓ Skipper Dashboard</h1>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <a href="priorities.html" style="color: #f87171; font-size: 13px; text-decoration: none; background: rgba(239,68,68,0.15); padding: 4px 12px; border-radius: 6px;">🎯 Priorities</a>
+      <div class="time" id="current-time"></div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card purple">
+      <div class="label">Context Usage</div>
+      <div class="value" id="context-pct">62%</div>
+    </div>
+    <div class="stat-card green">
+      <div class="label">Session Health</div>
+      <div class="value" style="font-size: 20px;">✅ Good</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="label">Strategy Lab</div>
+      <div class="value" style="font-size: 18px;">Running 🧪</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="label">Best Strategy</div>
+      <div class="value" style="font-size: 18px;">early_bird 🏆</div>
+    </div>
+  </div>
+
+  <div class="section-title">🧮 Token Usage by Task</div>
+  <div class="token-grid" id="token-usage">
+    <div class="token-card">
+      <div class="task-name">📱 Main Session</div>
+      <div class="token-count">85.8k</div>
+      <div class="token-cost">~$0.21</div>
+      <div class="token-bar"><div class="token-bar-fill" style="width: 58%"></div></div>
+    </div>
+    <div class="token-card">
+      <div class="task-name">🔄 Overnight Cron</div>
+      <div class="token-count">146.3k</div>
+      <div class="token-cost">~$0.09</div>
+      <div class="token-bar"><div class="token-bar-fill" style="width: 100%"></div></div>
+    </div>
+    <div class="token-card">
+      <div class="task-name">📧 Alexander Batches</div>
+      <div class="token-count">83.6k</div>
+      <div class="token-cost">~$0.05</div>
+      <div class="token-bar"><div class="token-bar-fill" style="width: 57%"></div></div>
+    </div>
+    <div class="token-card">
+      <div class="task-name">🌅 Morning Brief</div>
+      <div class="token-count">20.3k</div>
+      <div class="token-cost">~$0.02</div>
+      <div class="token-bar"><div class="token-bar-fill" style="width: 14%"></div></div>
+    </div>
+    <div class="token-card">
+      <div class="task-name">🤖 Degen Updates</div>
+      <div class="token-count">17.7k</div>
+      <div class="token-cost">~$0.02</div>
+      <div class="token-bar"><div class="token-bar-fill" style="width: 12%"></div></div>
+    </div>
+    <div class="token-card">
+      <div class="task-name">💎 Deal Scanner</div>
+      <div class="token-count">16.3k</div>
+      <div class="token-cost">~$0.01</div>
+      <div class="token-bar"><div class="token-bar-fill" style="width: 11%"></div></div>
+    </div>
+  </div>
+
+  <div class="section-title">📋 Task Board</div>
+  <div class="kanban">
+    <div class="kanban-column">
+      <h3>🔥 High Priority <span class="count">2</span></h3>
+      <div class="task-card priority-high style-b style-b-1">
+        <div class="title">Pump.fun Hackathon</div>
+        <div class="meta">Deadline: Feb 18 • $250k prize</div>
+        <div class="progress-pct" style="left: calc(25% + 8px);">25%</div>
+        <style>.task-card.style-b-1::before { width: 25%; }</style>
+      </div>
+      <div class="task-card priority-high style-b style-b-2 clickable" onclick="openModal('repal-beta')" style="cursor:pointer;">
+        <div class="title">🏠 Repal CRM Beta</div>
+        <div class="meta">🎯 DEADLINE: Feb 7 • Tap for full roadmap</div>
+        <div class="progress-pct" style="left: calc(40% + 8px);">40%</div>
+        <style>.task-card.style-b-2::before { width: 40%; }</style>
+      </div>
+    </div>
+    <div class="kanban-column">
+      <h3>🏗️ In Progress <span class="count">5</span></h3>
+      <div class="task-card priority-high">
+        <div class="title">💎 FlipHunter Pro</div>
+        <div class="meta">LIVE • 156 items • 17 categories • Scanning FL</div>
+      </div>
+      <div class="task-card priority-high">
+        <div class="title">📧 Alexander Phone Lookups</div>
+        <div class="meta">IN PROGRESS • 2,328 total • ~800 pending • Sub-agent running</div>
+      </div>
+      <div class="task-card priority-medium">
+        <div class="title">📈 TradingPal Bots</div>
+        <div class="meta">3 dry run bots active • 66.7 MATIC in wallet</div>
+      </div>
+      <div class="task-card priority-medium">
+        <div class="title">📚 Monitor @AlexFinn</div>
+        <div class="meta">X + YouTube • AI automation intel</div>
+      </div>
+      <div class="task-card priority-medium">
+        <div class="title">🪙 Memecoin Research</div>
+        <div class="meta">USOR watching • Scanner running</div>
+      </div>
+    </div>
+    <div class="kanban-column">
+      <h3>📝 Backlog <span class="count">4</span></h3>
+      <div class="task-card priority-low">
+        <div class="title">Run Supabase Migration</div>
+        <div class="meta">Repal CRM • 001_add_lead_fields.sql</div>
+      </div>
+      <div class="task-card priority-low">
+        <div class="title">Revive @luij78</div>
+        <div class="meta">X content strategy</div>
+      </div>
+      <div class="task-card priority-low">
+        <div class="title">Calendar Integration</div>
+        <div class="meta">For morning briefs</div>
+      </div>
+      <div class="task-card priority-low">
+        <div class="title">Voice Response (TTS)</div>
+        <div class="meta">ElevenLabs setup</div>
+      </div>
+    </div>
+    <div class="kanban-column">
+      <h3>✅ Done <span class="count">19</span></h3>
+      <div class="task-card">
+        <div class="title">✅ TradingPal Status Clarified</div>
+        <div class="meta">Jan 28 • 3 bots running • 66.7 MATIC</div>
+      </div>
+      <div class="task-card">
+        <div class="title">✅ FlipHunter Pro Built</div>
+        <div class="meta">Jan 27 • Live at 192.168.5.51:8080</div>
+      </div>
+      <div class="task-card">
+        <div class="title">✅ FlipHunter False Positive Fix</div>
+        <div class="meta">Jan 27 overnight • NEGATIVE_WORDS filter</div>
+      </div>
+      <div class="task-card">
+        <div class="title">✅ Phone Lookup System Built</div>
+        <div class="meta">Jan 27 • Browser automation working • Bypasses Cloudflare</div>
+      </div>
+      <div class="task-card">
+        <div class="title">✅ Solana Wallet Created</div>
+        <div class="meta">Jan 26 • 5x6uz...VRir</div>
+      </div>
+      <div class="task-card">
+        <div class="title">✅ Dashboard Built</div>
+        <div class="meta">Jan 26 • This dashboard</div>
+      </div>
+      <div class="task-card">
+        <div class="title">✅ Trading Bot Built</div>
+        <div class="meta">Jan 26 • Jupiter integration</div>
+      </div>
+      <div class="task-card">
+        <div class="title">✅ Skipper Identity</div>
+        <div class="meta">Jan 25 • Memory system working</div>
+      </div>
+      <div class="task-card">
+        <div class="title">✅ Email Setup</div>
+        <div class="meta">luis.ai.skipper@gmail.com</div>
+      </div>
+      <div class="task-card">
+        <div class="title">✅ Voice Transcription</div>
+        <div class="meta">whisper-cpp working</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">⏰ Scheduled Jobs</div>
+  <div class="cron-grid">
+    <div class="cron-card">
+      <div class="info">
+        <h4>🌅 Morning Brief</h4>
+        <div class="schedule">Every day at 6:00 AM EST</div>
+      </div>
+      <div class="status ok">Active</div>
+    </div>
+    <div class="cron-card">
+      <div class="info">
+        <h4>🌙 Overnight Work</h4>
+        <div class="schedule">Every day at 11:00 PM EST</div>
+      </div>
+      <div class="status ok">Active</div>
+    </div>
+    <div class="cron-card">
+      <div class="info">
+        <h4>📈 Memecoin Scanner</h4>
+        <div class="schedule">Every 30 minutes</div>
+      </div>
+      <div class="status ok">Active</div>
+    </div>
+    <div class="cron-card">
+      <div class="info">
+        <h4>💎 FlipHunter Scanner</h4>
+        <div class="schedule">Every 2 hours • FL cities</div>
+      </div>
+      <div class="status ok">Active</div>
+    </div>
+  </div>
+
+  <div class="section-title">🚀 Active Projects</div>
+  <div class="projects-grid">
+    <div class="project-card">
+      <h4>💎 FlipHunter Pro</h4>
+      <div class="desc">Deal finder • 156 items • 17 categories</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 90%"></div></div>
+      <div class="progress-text">90% complete • LIVE at 192.168.5.51:8080</div>
+    </div>
+    <div class="project-card">
+      <h4>📊 TradingPal</h4>
+      <div class="desc">Polymarket bot • 66.7 MATIC</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 70%"></div></div>
+      <div class="progress-text">70% complete • Mostly dry runs</div>
+    </div>
+    <button class="project-card clickable" style="border-left: 3px solid #ef4444; background: rgba(239,68,68,0.1); text-align: left; width: 100%;" onclick="openModal('repal-beta')">
+      <h4>🏠 Repal CRM</h4>
+      <div class="desc">Real estate CRM • Next.js + Supabase • 3 Phases</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 35%; background: linear-gradient(90deg, #ef4444, #f97316);"></div></div>
+      <div class="progress-text">Phase 1: 35% • 🎯 Beta Feb 7 • Click for full roadmap</div>
+    </button>
+    <div class="project-card">
+      <h4>🎰 Pump.fun Hackathon</h4>
+      <div class="desc">$SKIPPER token • $250k prize</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 25%"></div></div>
+      <div class="progress-text">25% complete • Feb 18 deadline</div>
+    </div>
+    <div class="project-card">
+      <h4>🤝 Alexander Partnership</h4>
+      <div class="desc">AI monetization • Phone lookups done</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 50%"></div></div>
+      <div class="progress-text">50% complete • Building together</div>
+    </div>
+  </div>
+
+  <div class="section-title">🏴‍☠️ B-MODE: Unfair Advantage <span style="font-size: 12px; opacity: 0.6; margin-left: 8px;">(click any tile for details)</span></div>
+  <div class="projects-grid">
+    <div class="project-card clickable" style="border-left: 3px solid #22d3ee; background: rgba(34,211,238,0.1);" onclick="openModal('pocket-listing')">
+      <h4>🏠 Pocket Listing Hunter</h4>
+      <div class="desc">Scrape FB wholesaler groups, Craigslist, auctions, estate sales — BEFORE MLS</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 0%; background: linear-gradient(90deg, #22d3ee, #06b6d4);"></div></div>
+      <div class="progress-text">0% • 🎯 TARGET: Tue Feb 4</div>
+    </div>
+    <div class="project-card clickable" style="border-left: 3px solid #22d3ee; background: rgba(34,211,238,0.1);" onclick="openModal('flip-calc')">
+      <h4>📈 Flip Calculator</h4>
+      <div class="desc">Monitor Zillow vs listings 24/7 • Alert when 15%+ below estimate</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 0%; background: linear-gradient(90deg, #22d3ee, #06b6d4);"></div></div>
+      <div class="progress-text">0% • 🎯 TARGET: Wed Feb 5</div>
+    </div>
+    <div class="project-card clickable" style="border-left: 3px solid #22d3ee; background: rgba(34,211,238,0.1);" onclick="openModal('flash-crash')">
+      <h4>⚡ Flash Crash Strategy</h4>
+      <div class="desc">TradingPal upgrade • WebSocket real-time • 15-min BTC/ETH markets • Mean reversion scalping</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 0%; background: linear-gradient(90deg, #22d3ee, #06b6d4);"></div></div>
+      <div class="progress-text">0% • 🎯 TARGET: Wed Feb 5</div>
+    </div>
+    <div class="project-card clickable" style="border-left: 3px solid #ef4444;" onclick="openModal('war-room')">
+      <h4>🕵️ War Room</h4>
+      <div class="desc">Competitive Intel • Monitor every agent in your zip codes • Listings, price drops, social posts</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 0%; background: linear-gradient(90deg, #ef4444, #f97316);"></div></div>
+      <div class="progress-text">0% • NOT STARTED</div>
+    </div>
+    <div class="project-card clickable" style="border-left: 3px solid #ef4444;" onclick="openModal('pre-call')">
+      <h4>📞 Pre-Call Dossiers</h4>
+      <div class="desc">Before ANY call: LinkedIn, FB, property records, net worth, family members, dog's name</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 0%; background: linear-gradient(90deg, #ef4444, #f97316);"></div></div>
+      <div class="progress-text">0% • NOT STARTED</div>
+    </div>
+    <div class="project-card clickable" style="border-left: 3px solid #ef4444;" onclick="openModal('voice-clone')">
+      <h4>🤖 AI Voice Clone</h4>
+      <div class="desc">ElevenLabs voice clone • Make initial outreach calls • Disclosed as AI</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 0%; background: linear-gradient(90deg, #ef4444, #f97316);"></div></div>
+      <div class="progress-text">0% • NOT STARTED</div>
+    </div>
+    <div class="project-card clickable" style="border-left: 3px solid #f59e0b;" onclick="openModal('relationship-intel')">
+      <h4>💬 Relationship Intelligence</h4>
+      <div class="desc">Track every contact • Build connection graph • Find hidden intros</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 0%; background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div></div>
+      <div class="progress-text">0% • NOT STARTED</div>
+    </div>
+    <div class="project-card clickable" style="border-left: 3px solid #f59e0b;" onclick="openModal('auto-apply')">
+      <h4>🎯 Auto-Apply Machine</h4>
+      <div class="desc">Awards, speaking gigs, podcasts, affiliate programs, bank bonuses • Passive income drip</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 0%; background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div></div>
+      <div class="progress-text">0% • NOT STARTED</div>
+    </div>
+    <div class="project-card clickable" style="border-left: 3px solid #f59e0b;" onclick="openModal('prediction')">
+      <h4>📊 Prediction Engine</h4>
+      <div class="desc">Analyze your deals • Which sources convert • Best days/times • Who to call</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 0%; background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div></div>
+      <div class="progress-text">0% • NOT STARTED</div>
+    </div>
+    <div class="project-card clickable" style="border-left: 3px solid #22c55e; background: rgba(34,197,94,0.15);" onclick="openModal('second-brain')">
+      <h4>🧠 Second Brain</h4>
+      <div class="desc">Obsidian vault • People/Projects/Decisions • Shared knowledge base</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 100%; background: linear-gradient(90deg, #22c55e, #4ade80);"></div></div>
+      <div class="progress-text">✅ DONE • Jan 30</div>
+    </div>
+    <div class="project-card clickable" style="border-left: 3px solid #22c55e;" onclick="openModal('ai-receptionist')">
+      <h4>📱 24/7 AI Receptionist</h4>
+      <div class="desc">Answer calls in showings • Qualify leads • Book appointments</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 0%; background: linear-gradient(90deg, #22c55e, #4ade80);"></div></div>
+      <div class="progress-text">0% • ON HOLD</div>
+    </div>
+    <div class="project-card clickable" style="border-left: 3px solid #22c55e;" onclick="openModal('content-army')">
+      <h4>🚀 Content Army</h4>
+      <div class="desc">Sub-agents: TikTok trends, X threads, viral hooks • Daily content menu</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 5%; background: linear-gradient(90deg, #22c55e, #4ade80);"></div></div>
+      <div class="progress-text">5% • Daily accountability live</div>
+    </div>
+    <div class="project-card clickable" style="border-left: 3px solid #22c55e;" onclick="openModal('navy-vet')">
+      <h4>💰 Navy Vet Brand</h4>
+      <div class="desc">THE veteran agent in Orlando • VA loans • Military relocation • Positioning</div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 0%; background: linear-gradient(90deg, #22c55e, #4ade80);"></div></div>
+      <div class="progress-text">0% • NOT STARTED</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Built by Skipper ⚓ • Last updated: Jan 31, 2026 1:35 AM
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <h2 id="modal-title">Project Name</h2>
+      <div class="target-date" id="modal-target"></div>
+      <div class="overview">
+        <h3>📋 Overview</h3>
+        <div id="modal-overview"></div>
+      </div>
+      <div class="checklist">
+        <h3>✅ Checklist</h3>
+        <div id="modal-checklist"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'America/New_York' };
+      document.getElementById('current-time').textContent = now.toLocaleString('en-US', opts) + ' EST';
+    }
+    updateTime();
+    setInterval(updateTime, 60000);
+
+    // Project Data
+    const projects = {
+      'repal-beta': {
+        title: '🏠 Repal CRM',
+        target: '🎯 DEADLINE: Fri Feb 7, 2026 (Beta)',
+        overview: `<p><strong>Goal:</strong> Full-featured CRM that's faster, smarter, and built for mobile-first real estate agents.</p>
+        <p><strong>Differentiators vs Brivity:</strong> ⚡ Faster • 🤖 AI-first • 🎤 Voice-first mobile • 🌙 Dark mode • 🐧 Skipper integration</p>
+        <p><strong>Code:</strong> <code>~/clawd/repal-app/</code> | <strong>Mockups:</strong> <code>mockup-leads-*.html</code></p>
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.1);margin:12px 0;">
+        <p style="color:#f59e0b;font-weight:600;">📋 PHASE 1: Beta (Feb 7)</p>`,
+        checklist: [
+          { id: 'rp-1', text: '✅ Lead CRUD + Priority system', done: true },
+          { id: 'rp-2', text: '✅ Notes with timestamps + voice input', done: true },
+          { id: 'rp-3', text: '✅ Intent field (Buyer/Seller/etc)', done: true },
+          { id: 'rp-4', text: '✅ Stage dropdown', done: true },
+          { id: 'rp-5', text: '✅ Source tracking', done: true },
+          { id: 'rp-6', text: '✅ UI Mockups approved (Feb 3)', done: true },
+          { id: 'rp-7', text: 'Code View Lead modal (centered slide-up)', done: true },
+          { id: 'rp-8', text: 'Code Lead tiles (avatars, badges)', done: false },
+          { id: 'rp-9', text: 'Code Edit Lead modal', done: false },
+          { id: 'rp-10', text: 'Deploy to Vercel', done: false },
+          { id: 'rp-11', text: 'Import Brivity notes (172 leads)', done: false },
+          { id: 'rp-12', text: 'AI "Help Me Write" button', done: false },
+          { id: 'rp-phase2', text: '──── PHASE 2: Monetization (Feb 15+) ────', done: false },
+          { id: 'rp-13', text: 'Stripe integration', done: false },
+          { id: 'rp-14', text: 'Free trial (14 days)', done: false },
+          { id: 'rp-15', text: 'Pricing tiers (Free/$29/$79)', done: false },
+          { id: 'rp-16', text: 'Tasks tab with reminders', done: false },
+          { id: 'rp-17', text: 'Activity tracking tab', done: false },
+          { id: 'rp-phase3', text: '──── PHASE 3: Intelligence (Mar+) ────', done: false },
+          { id: 'rp-18', text: '💬 Relationship Intelligence', done: false },
+          { id: 'rp-19', text: 'Connection graph (who knows who)', done: false },
+          { id: 'rp-20', text: 'Warm intro suggestions', done: false },
+          { id: 'rp-21', text: 'Prediction engine (best times to call)', done: false },
+          { id: 'rp-22', text: 'Email/text parsing for relationships', done: false }
+        ]
+      },
+      'pocket-listing': {
+        title: '🏠 Pocket Listing Hunter',
+        target: '🎯 Target: Tue Feb 4, 2026',
+        overview: `<p><strong>What it does:</strong> Scrapes off-market deal sources (Craigslist, auction sites, estate sales) and sends you Telegram alerts BEFORE deals hit MLS.</p>
+        <p><strong>Why it matters:</strong> First mover advantage. See deals before other agents. Direct revenue potential.</p>
+        <p><strong>Tech:</strong> Python + BeautifulSoup + Telegram Bot API. Zero tokens once live.</p>`,
+        checklist: [
+          { id: 'pl-1', text: 'Set up Python project structure', done: false },
+          { id: 'pl-2', text: 'Build Craigslist scraper (Orlando/Clermont)', done: false },
+          { id: 'pl-3', text: 'Build auction site scraper (Auction.com, Hubzu)', done: false },
+          { id: 'pl-4', text: 'Build estate sale scraper (EstateSales.net)', done: false },
+          { id: 'pl-5', text: 'Set up Telegram bot for alerts', done: false },
+          { id: 'pl-6', text: 'Add deduplication (no repeat alerts)', done: false },
+          { id: 'pl-7', text: 'Deploy as cron job (every 30 min)', done: false },
+          { id: 'pl-8', text: 'Test with live data', done: false }
+        ]
+      },
+      'flip-calc': {
+        title: '📈 Flip Calculator',
+        target: '🎯 Target: Wed Feb 5, 2026',
+        overview: `<p><strong>What it does:</strong> Monitors new listings 24/7 and compares asking price vs Zillow/Redfin estimates. Alerts you when properties are 15%+ underpriced.</p>
+        <p><strong>Why it matters:</strong> Find motivated sellers and flip opportunities instantly. Great for investor clients.</p>
+        <p><strong>Tech:</strong> Python + Zillow API/scrape + Telegram alerts. Zero tokens once live.</p>`,
+        checklist: [
+          { id: 'fc-1', text: 'Set up Zillow Zestimate fetching', done: false },
+          { id: 'fc-2', text: 'Set up Redfin estimate fetching', done: false },
+          { id: 'fc-3', text: 'Build MLS/listing feed parser', done: false },
+          { id: 'fc-4', text: 'Implement price comparison logic', done: false },
+          { id: 'fc-5', text: 'Add filters (DOM > 45, price drops, keywords)', done: false },
+          { id: 'fc-6', text: 'Set up Telegram alerts', done: false },
+          { id: 'fc-7', text: 'Deploy as cron job', done: false },
+          { id: 'fc-8', text: 'Test with live listings', done: false }
+        ]
+      },
+      'flash-crash': {
+        title: '⚡ Flash Crash Strategy',
+        target: '🎯 Target: Wed Feb 5, 2026',
+        overview: `<p><strong>What it does:</strong> TradingPal upgrade. Monitors 15-minute BTC/ETH markets on Polymarket via WebSocket. When price drops 30%+ in 10 seconds, automatically buys the dip (mean reversion).</p>
+        <p><strong>Why it matters:</strong> Complements current time-decay strategy. Multiple trades per day on fast markets. Real-time reaction.</p>
+        <p><strong>Tech:</strong> Python + WebSocket + Polymarket CLOB API. Adds to existing TradingPal.</p>`,
+        checklist: [
+          { id: 'fcs-1', text: 'Set up WebSocket connection to Polymarket orderbook', done: false },
+          { id: 'fcs-2', text: 'Build 15-minute market discovery (Gamma API)', done: false },
+          { id: 'fcs-3', text: 'Implement rolling price window (10 seconds)', done: false },
+          { id: 'fcs-4', text: 'Build flash crash detection (30% drop threshold)', done: false },
+          { id: 'fcs-5', text: 'Add quick order execution logic', done: false },
+          { id: 'fcs-6', text: 'Implement take-profit ($0.10) and stop-loss ($0.05)', done: false },
+          { id: 'fcs-7', text: 'Paper trade testing', done: false },
+          { id: 'fcs-8', text: 'Deploy alongside existing TradingPal bots', done: false }
+        ]
+      },
+      'war-room': {
+        title: '🕵️ War Room',
+        target: 'Not scheduled',
+        overview: `<p><strong>What it does:</strong> Monitors every real estate agent in your zip codes. Tracks their new listings, price drops, days on market, social media posts.</p>
+        <p><strong>Why it matters:</strong> Know what competitors are doing before their clients do. Find opportunities they miss.</p>`,
+        checklist: [
+          { id: 'wr-1', text: 'Identify target agents/zip codes', done: false },
+          { id: 'wr-2', text: 'Build MLS listing tracker per agent', done: false },
+          { id: 'wr-3', text: 'Build social media monitor', done: false },
+          { id: 'wr-4', text: 'Create daily digest format', done: false },
+          { id: 'wr-5', text: 'Deploy and test', done: false }
+        ]
+      },
+      'pre-call': {
+        title: '📞 Pre-Call Dossiers',
+        target: 'Not scheduled',
+        overview: `<p><strong>What it does:</strong> Before ANY call, automatically pulls LinkedIn, Facebook, property records, estimated net worth, family members, even their dog's name.</p>
+        <p><strong>Why it matters:</strong> Walk into calls knowing everything. Build instant rapport. Close more deals.</p>`,
+        checklist: [
+          { id: 'pc-1', text: 'Build property records lookup', done: false },
+          { id: 'pc-2', text: 'Build LinkedIn scraper', done: false },
+          { id: 'pc-3', text: 'Build Facebook public info scraper', done: false },
+          { id: 'pc-4', text: 'Integrate with TruePeopleSearch', done: false },
+          { id: 'pc-5', text: 'Create dossier format/template', done: false },
+          { id: 'pc-6', text: 'Build trigger (on-demand or pre-call)', done: false }
+        ]
+      },
+      'voice-clone': {
+        title: '🤖 AI Voice Clone',
+        target: 'Not scheduled',
+        overview: `<p><strong>What it does:</strong> Clones your voice with ElevenLabs. Makes initial outreach calls to cold leads while you sleep. Fully disclosed as AI.</p>
+        <p><strong>Why it matters:</strong> 10x your outreach capacity. You only talk to warm leads.</p>`,
+        checklist: [
+          { id: 'vc-1', text: 'Record 60 seconds of Luis speaking', done: false },
+          { id: 'vc-2', text: 'Upload to ElevenLabs voice cloning', done: false },
+          { id: 'vc-3', text: 'Write call scripts for different scenarios', done: false },
+          { id: 'vc-4', text: 'Set up Twilio for outbound calls', done: false },
+          { id: 'vc-5', text: 'Build call scheduling system', done: false },
+          { id: 'vc-6', text: 'Add AI disclosure per regulations', done: false },
+          { id: 'vc-7', text: 'Test and refine', done: false }
+        ]
+      },
+      'relationship-intel': {
+        title: '💬 Relationship Intelligence',
+        target: 'Not scheduled',
+        overview: `<p><strong>What it does:</strong> Tracks every person you interact with (texts, emails, calls). Builds a connection graph. Finds warm intros you don't see.</p>
+        <p><strong>Why it matters:</strong> "Your lead's brother-in-law bought from you in 2024." Hidden connections = warm deals.</p>`,
+        checklist: [
+          { id: 'ri-1', text: 'Import contacts from CRM', done: false },
+          { id: 'ri-2', text: 'Parse email contacts', done: false },
+          { id: 'ri-3', text: 'Parse text/call logs', done: false },
+          { id: 'ri-4', text: 'Build connection graph database', done: false },
+          { id: 'ri-5', text: 'Implement relationship finding algorithm', done: false },
+          { id: 'ri-6', text: 'Build query interface', done: false }
+        ]
+      },
+      'auto-apply': {
+        title: '🎯 Auto-Apply Machine',
+        target: 'Not scheduled',
+        overview: `<p><strong>What it does:</strong> Automatically finds and applies for real estate awards, speaking gigs, podcast guest spots, affiliate programs, bank bonuses.</p>
+        <p><strong>Why it matters:</strong> Free money drip. Passive income. You do nothing.</p>`,
+        checklist: [
+          { id: 'aa-1', text: 'Compile list of RE award programs', done: false },
+          { id: 'aa-2', text: 'Compile list of podcast/speaking opps', done: false },
+          { id: 'aa-3', text: 'Build application templates', done: false },
+          { id: 'aa-4', text: 'Automate submission process', done: false },
+          { id: 'aa-5', text: 'Track applications and results', done: false }
+        ]
+      },
+      'prediction': {
+        title: '📊 Prediction Engine',
+        target: 'Not scheduled',
+        overview: `<p><strong>What it does:</strong> Analyzes your past deals - which lead sources convert, what price points you close, which days you're most productive.</p>
+        <p><strong>Why it matters:</strong> "Stop calling Zillow leads on Mondays. Your conversion is 3x higher on Thursdays after 2pm."</p>`,
+        checklist: [
+          { id: 'pe-1', text: 'Export historical deal data', done: false },
+          { id: 'pe-2', text: 'Analyze lead source conversion rates', done: false },
+          { id: 'pe-3', text: 'Analyze time-of-day patterns', done: false },
+          { id: 'pe-4', text: 'Build recommendation engine', done: false },
+          { id: 'pe-5', text: 'Create daily "who to call" list', done: false }
+        ]
+      },
+      'second-brain': {
+        title: '🧠 Second Brain',
+        target: 'Not scheduled',
+        overview: `<p><strong>What it does:</strong> Not just storage — actual intelligence. Connects dots across your entire network and surfaces relevant info at the right time.</p>
+        <p><strong>Why it matters:</strong> "Remember that investor from November? He wanted duplexes in Sanford. This new listing matches."</p>`,
+        checklist: [
+          { id: 'sb-1', text: 'Set up knowledge base structure', done: false },
+          { id: 'sb-2', text: 'Import existing notes/contacts', done: false },
+          { id: 'sb-3', text: 'Build semantic search', done: false },
+          { id: 'sb-4', text: 'Create connection-finding logic', done: false },
+          { id: 'sb-5', text: 'Build proactive suggestion system', done: false }
+        ]
+      },
+      'ai-receptionist': {
+        title: '📱 24/7 AI Receptionist',
+        target: 'On Hold',
+        overview: `<p><strong>What it does:</strong> Answers your phone when you're busy. Qualifies leads, books appointments, briefs you before callbacks.</p>
+        <p><strong>Why it matters:</strong> Never miss a hot lead again. Every call gets answered professionally.</p>
+        <p><strong>Status:</strong> On hold per Luis (Jan 30)</p>`,
+        checklist: [
+          { id: 'ar-1', text: 'Choose platform (Bland AI / Vapi / Retell)', done: false },
+          { id: 'ar-2', text: 'Set up phone number forwarding', done: false },
+          { id: 'ar-3', text: 'Write qualification scripts', done: false },
+          { id: 'ar-4', text: 'Integrate with calendar', done: false },
+          { id: 'ar-5', text: 'Set up Telegram summaries', done: false },
+          { id: 'ar-6', text: 'Test with real calls', done: false }
+        ]
+      },
+      'content-army': {
+        title: '🚀 Content Army',
+        target: 'Not scheduled',
+        overview: `<p><strong>What it does:</strong> Sub-agents that monitor TikTok trends, draft X threads, find viral hooks. Every day you get a content menu.</p>
+        <p><strong>Why it matters:</strong> Build audience while you sell houses. Content compounds.</p>
+        <p><strong>Status:</strong> 5% - Daily accountability system live</p>`,
+        checklist: [
+          { id: 'ca-1', text: 'Daily content accountability', done: true },
+          { id: 'ca-2', text: 'TikTok trend monitor', done: false },
+          { id: 'ca-3', text: 'X thread generator', done: false },
+          { id: 'ca-4', text: 'Viral hook finder', done: false },
+          { id: 'ca-5', text: 'Daily content menu delivery', done: false }
+        ]
+      },
+      'navy-vet': {
+        title: '💰 Navy Vet Brand',
+        target: 'Not scheduled',
+        overview: `<p><strong>What it does:</strong> Positions you as THE veteran real estate agent in Orlando. Targets VA loans, military relocation, veteran homebuyers.</p>
+        <p><strong>Why it matters:</strong> Loyal niche. Less competition. Veterans trust veterans.</p>`,
+        checklist: [
+          { id: 'nv-1', text: 'Create VA loan content/guides', done: false },
+          { id: 'nv-2', text: 'Build military relocation landing page', done: false },
+          { id: 'nv-3', text: 'Join veteran business networks', done: false },
+          { id: 'nv-4', text: 'Outreach to VFW/American Legion', done: false },
+          { id: 'nv-5', text: 'Create "Navy to Real Estate" story content', done: false }
+        ]
+      }
+    };
+
+    function openModal(projectId) {
+      const project = projects[projectId];
+      if (!project) return;
+      
+      document.getElementById('modal-title').textContent = project.title;
+      document.getElementById('modal-target').textContent = project.target;
+      document.getElementById('modal-overview').innerHTML = project.overview;
+      
+      const checklistHtml = project.checklist.map(item => `
+        <div class="checklist-item ${item.done ? 'done' : ''}">
+          <input type="checkbox" id="${item.id}" ${item.done ? 'checked' : ''} onclick="toggleCheck('${projectId}', '${item.id}')">
+          <label for="${item.id}">${item.text}</label>
+        </div>
+      `).join('');
+      document.getElementById('modal-checklist').innerHTML = checklistHtml;
+      
+      document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('active');
+    }
+
+    function toggleCheck(projectId, itemId) {
+      const item = projects[projectId].checklist.find(i => i.id === itemId);
+      if (item) item.done = !item.done;
+    }
+
+    // Close modal on overlay click
+    document.getElementById('modal-overlay').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>

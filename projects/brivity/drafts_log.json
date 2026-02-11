@@ -1,0 +1,54 @@
+{
+  "description": "Tracks which leads have drafts to prevent duplicate work",
+  "last_updated": "2026-02-06T07:15:00-05:00",
+  "drafts_completed": {
+    "2026-01-29": [
+      "Douglas Rimler",
+      "Kris Kannel",
+      "Fernanda Lappe",
+      "Katrina Falck",
+      "Jairo Pablo",
+      "Arvind Kataria",
+      "Yvonne Roshong",
+      "Tang enqui",
+      "Carolina Lopez",
+      "Cindy Belleau",
+      "Lexie Musser",
+      "Pierre Elionze",
+      "Catarina Nota",
+      "Porsha Madison",
+      "Denise Ball",
+      "Rebecca Jaqua"
+    ],
+    "2026-01-30": [
+      "Debbie Brown",
+      "Georgina Davino",
+      "Doreen Melchiorre",
+      "Carmelo Rodriguez",
+      "Lorene Walker",
+      "Miguel Lima",
+      "Carrie Stoudemire",
+      "Marta Fandino",
+      "Dean Green",
+      "Kim browning",
+      "Gabriel F",
+      "Dee guptar",
+      "William Halley",
+      "Richard",
+      "Veronica Gil",
+      "Martin Davalos",
+      "Robert Hernandez",
+      "Derick Mahadai",
+      "Arturo Davalos",
+      "Nicole McDonald",
+      "Fernanda Lappe",
+      "Douglas Rimler",
+      "Chris Miller",
+      "Ivan Flores"
+    ],
+    "2026-02-06": [
+      "Debbie Brown"
+    ]
+  },
+  "notes": "Updated 2/6 7:15am - Created new draft for Debbie Brown (HOT lead, very active, browsing yesterday). Verified Doreen Melchiorre still has relevant 1/30 draft in profile. Most Due Today leads (12/15) already have drafts from 1/30 session. Leads needing new drafts: Vincent R, Jean, Andrea/Nathan Padgett. MAJOR BACKLOG: 125 overdue tasks accumulated - needs attention."
+}

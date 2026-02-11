@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Florida Driver's Permit Study Guide</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            opacity: 0.9;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .category-badge {
+            display: inline-block;
+            background: #e8f4fd;
+            color: #1e3c72;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .question {
+            font-size: 1.25em;
+            line-height: 1.5;
+            color: #333;
+            margin-bottom: 25px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1em;
+        }
+        
+        .option:hover {
+            border-color: #1e3c72;
+            background: #f8faff;
+        }
+        
+        .option.selected {
+            border-color: #1e3c72;
+            background: #e8f4fd;
+        }
+        
+        .option.correct {
+            border-color: #27ae60;
+            background: #d4edda;
+        }
+        
+        .option.incorrect {
+            border-color: #e74c3c;
+            background: #f8d7da;
+        }
+        
+        .option.show-correct {
+            border-color: #27ae60;
+            background: #d4edda;
+        }
+        
+        .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .explanation.show {
+            display: block;
+        }
+        
+        .explanation h4 {
+            color: #856404;
+            margin-bottom: 8px;
+        }
+        
+        .explanation p {
+            color: #856404;
+            line-height: 1.5;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #1e3c72;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2a5298;
+        }
+        
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #27ae60;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .mode-btn {
+            padding: 10px 20px;
+            border: 2px solid rgba(255,255,255,0.5);
+            background: transparent;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .mode-btn:hover, .mode-btn.active {
+            background: white;
+            color: #1e3c72;
+        }
+        
+        .complete-screen {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .complete-screen h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        
+        .score-circle.fail {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .score-text {
+            color: white;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        
+        .complete-message {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        footer {
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            margin-top: 30px;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚗 Florida Permit Study Guide</h1>
+            <p>Practice for your Florida Driver's License Written Test</p>
+        </header>
+        
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="setMode('study')">📚 Study Mode</button>
+            <button class="mode-btn" onclick="setMode('test')">📝 Test Mode</button>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="correct-count">0</div>
+                <div class="stat-label">Correct</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="total-count">0/50</div>
+                <div class="stat-label">Questions</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="accuracy">0%</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+        </div>
+        
+        <div class="card" id="quiz-card">
+            <span class="category-badge" id="category">Loading...</span>
+            <p class="question" id="question">Loading question...</p>
+            <div class="options" id="options"></div>
+            <div class="explanation" id="explanation">
+                <h4>💡 Explanation</h4>
+                <p id="explanation-text"></p>
+            </div>
+            <div class="buttons">
+                <button class="btn btn-secondary" onclick="skipQuestion()">Skip</button>
+                <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" disabled>Next Question</button>
+            </div>
+        </div>
+        
+        <div class="card complete-screen" id="complete-screen" style="display:none;">
+            <h2>🎉 Quiz Complete!</h2>
+            <div class="score-circle" id="score-circle">
+                <span class="score-text" id="final-score">0%</span>
+            </div>
+            <p class="complete-message" id="complete-message">Great job studying!</p>
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="restartQuiz()">Try Again</button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Based on the Florida DHSMV Driver Handbook</p>
+            <p>Built by Skipper ⚓ for the Garcia family</p>
+        </footer>
+    </div>
+    
+    <script>
+        const questions = [
+            // ROAD SIGNS
+            {
+                category: "Road Signs",
+                question: "What does a red octagonal (8-sided) sign mean?",
+                options: ["Yield", "Stop", "Railroad Crossing", "Do Not Enter"],
+                correct: 1,
+                explanation: "A red octagonal sign always means STOP. You must come to a complete stop at the stop line, crosswalk, or before entering the intersection."
+            },
+            {
+                category: "Road Signs",
+                question: "What does a yellow diamond-shaped sign indicate?",
+                options: ["Stop ahead", "Warning or caution", "School zone", "Construction zone"],
+                correct: 1,
+                explanation: "Yellow diamond-shaped signs are warning signs. They alert you to possible hazards or changes in road conditions ahead."
+            },
+            {
+                category: "Road Signs",
+                question: "What does a pennant-shaped sign indicate?",
+                options: ["No parking zone", "School zone", "No passing zone", "Construction ahead"],
+                correct: 2,
+                explanation: "A pennant-shaped sign marks the beginning of a no passing zone. You will see it on the left side of the road."
+            },
+            {
+                category: "Road Signs",
+                question: "What color are regulatory signs (like speed limits)?",
+                options: ["Yellow with black letters", "White with black letters", "Green with white letters", "Blue with white letters"],
+                correct: 1,
+                explanation: "Regulatory signs are white with black (or red) letters. They tell you about laws and regulations you must follow."
+            },
+            {
+                category: "Road Signs",
+                question: "What does a circular yellow sign with an X and RR mean?",
+                options: ["Road closed ahead", "Railroad crossing ahead", "Rest area ahead", "Roundabout ahead"],
+                correct: 1,
+                explanation: "This advance warning sign tells you a railroad crossing is ahead. Slow down and be prepared to stop."
+            },
+            
+            // RIGHT OF WAY
+            {
+                category: "Right of Way",
+                question: "At a four-way stop, who has the right of way?",
+                options: ["The vehicle on the right", "The vehicle going straight", "The first vehicle to arrive", "The larger vehicle"],
+                correct: 2,
+                explanation: "At a four-way stop, the first vehicle to arrive and stop should go first. If two arrive at the same time, the vehicle on the right has the right of way."
+            },
+            {
+                category: "Right of Way",
+                question: "When must you yield to pedestrians?",
+                options: ["Only at marked crosswalks", "Only when they have a walk signal", "Always when they are in a crosswalk", "Only at intersections"],
+                correct: 2,
+                explanation: "You must always yield to pedestrians in a crosswalk, whether marked or unmarked. Pedestrian safety is paramount."
+            },
+            {
+                category: "Right of Way",
+                question: "When entering a highway from a private road or driveway, who has the right of way?",
+                options: ["You do", "Traffic on the highway", "Whoever gets there first", "Larger vehicles"],
+                correct: 1,
+                explanation: "When entering a highway from a private road or driveway, you must yield to all traffic on the highway."
+            },
+            {
+                category: "Right of Way",
+                question: "At a yield sign, what must you do?",
+                options: ["Always stop completely", "Slow down and stop if necessary", "Speed up to merge", "Honk your horn"],
+                correct: 1,
+                explanation: "At a yield sign, you must slow down and be ready to stop. Yield the right of way to traffic and pedestrians."
+            },
+            {
+                category: "Right of Way",
+                question: "When two vehicles reach an uncontrolled intersection at the same time, who goes first?",
+                options: ["The vehicle on the left", "The vehicle on the right", "The vehicle going faster", "The vehicle turning"],
+                correct: 1,
+                explanation: "At an uncontrolled intersection, the vehicle on the right has the right of way when two vehicles arrive at the same time."
+            },
+            
+            // SPEED LIMITS
+            {
+                category: "Speed Limits",
+                question: "What is the speed limit in a school zone in Florida?",
+                options: ["15 mph", "20 mph", "25 mph", "30 mph"],
+                correct: 1,
+                explanation: "The speed limit in school zones is 20 mph when children are present or the warning lights are flashing."
+            },
+            {
+                category: "Speed Limits",
+                question: "What is the speed limit in a residential area unless otherwise posted?",
+                options: ["20 mph", "25 mph", "30 mph", "35 mph"],
+                correct: 2,
+                explanation: "In residential areas, the speed limit is 30 mph unless otherwise posted."
+            },
+            {
+                category: "Speed Limits",
+                question: "What is the maximum speed limit on Florida interstate highways?",
+                options: ["55 mph", "65 mph", "70 mph", "75 mph"],
+                correct: 2,
+                explanation: "The maximum speed limit on Florida interstate highways is 70 mph, unless otherwise posted."
+            },
+            {
+                category: "Speed Limits",
+                question: "What is the speed limit in a business or commercial district?",
+                options: ["20 mph", "25 mph", "30 mph", "35 mph"],
+                correct: 2,
+                explanation: "In business and commercial districts, the speed limit is 30 mph unless otherwise posted."
+            },
+            
+            // PARKING
+            {
+                category: "Parking",
+                question: "How far must you park from a fire hydrant?",
+                options: ["10 feet", "15 feet", "20 feet", "25 feet"],
+                correct: 1,
+                explanation: "You must park at least 15 feet from a fire hydrant to allow fire trucks access."
+            },
+            {
+                category: "Parking",
+                question: "How far must you park from a crosswalk at an intersection?",
+                options: ["10 feet", "15 feet", "20 feet", "25 feet"],
+                correct: 2,
+                explanation: "You must park at least 20 feet from a crosswalk at an intersection."
+            },
+            {
+                category: "Parking",
+                question: "When parking uphill with a curb, which way should you turn your wheels?",
+                options: ["Away from the curb", "Toward the curb", "Straight ahead", "Doesn't matter"],
+                correct: 0,
+                explanation: "When parking uphill with a curb, turn your wheels away from the curb. If the car rolls, it will roll into the curb."
+            },
+            {
+                category: "Parking",
+                question: "How far must you park from a stop sign?",
+                options: ["20 feet", "30 feet", "40 feet", "50 feet"],
+                correct: 1,
+                explanation: "You must park at least 30 feet from a stop sign to ensure visibility for other drivers."
+            },
+            
+            // ALCOHOL & DRUGS
+            {
+                category: "Alcohol & Drugs",
+                question: "What is the legal blood alcohol concentration (BAC) limit for drivers 21 and over in Florida?",
+                options: ["0.02%", "0.05%", "0.08%", "0.10%"],
+                correct: 2,
+                explanation: "The legal BAC limit for drivers 21 and over is 0.08%. Driving with a BAC at or above this level is illegal."
+            },
+            {
+                category: "Alcohol & Drugs",
+                question: "What is the BAC limit for drivers under 21 in Florida?",
+                options: ["0.00%", "0.02%", "0.05%", "0.08%"],
+                correct: 1,
+                explanation: "Florida has a zero tolerance law for drivers under 21. A BAC of 0.02% or higher is illegal."
+            },
+            {
+                category: "Alcohol & Drugs",
+                question: "What is Florida's 'implied consent' law?",
+                options: ["You consent to obey traffic laws", "You consent to chemical testing if arrested for DUI", "You consent to carry insurance", "You consent to inspections"],
+                correct: 1,
+                explanation: "By driving in Florida, you automatically consent to chemical testing (breath, blood, urine) if lawfully arrested for DUI."
+            },
+            {
+                category: "Alcohol & Drugs",
+                question: "What happens if you refuse a breathalyzer test in Florida?",
+                options: ["Nothing", "Warning only", "License suspended for 1 year (first refusal)", "License suspended for 6 months"],
+                correct: 2,
+                explanation: "First refusal to submit to testing results in a one-year license suspension. Second refusal is 18 months and a misdemeanor."
+            },
+            
+            // SAFE DRIVING
+            {
+                category: "Safe Driving",
+                question: "What is the recommended following distance in good conditions?",
+                options: ["1-2 seconds", "3-4 seconds", "5-6 seconds", "7-8 seconds"],
+                correct: 1,
+                explanation: "Maintain a following distance of at least 3-4 seconds in good conditions. Increase this in bad weather or at higher speeds."
+            },
+            {
+                category: "Safe Driving",
+                question: "When should you use your headlights?",
+                options: ["Only at night", "From sunset to sunrise", "From sunset to sunrise and during rain", "Only in bad weather"],
+                correct: 2,
+                explanation: "Use headlights from sunset to sunrise and during rain or other conditions that reduce visibility. Florida law requires this."
+            },
+            {
+                category: "Safe Driving",
+                question: "What should you do if your car starts to skid?",
+                options: ["Slam on the brakes", "Steer in the direction you want to go", "Speed up", "Turn off the engine"],
+                correct: 1,
+                explanation: "If your car skids, take your foot off the gas and steer in the direction you want the car to go. Don't slam the brakes."
+            },
+            {
+                category: "Safe Driving",
+                question: "What is the proper way to make a left turn at an intersection?",
+                options: ["Turn from any lane", "Turn into any lane", "Turn from the leftmost lane into the leftmost lane", "Turn quickly to avoid traffic"],
+                correct: 2,
+                explanation: "When making a left turn, start from the leftmost lane and turn into the leftmost lane available for traffic going your direction."
+            },
+            {
+                category: "Safe Driving",
+                question: "When approaching a school bus with flashing red lights, what must you do?",
+                options: ["Slow down to 20 mph", "Pass carefully on the left", "Stop until lights stop flashing", "Honk to alert children"],
+                correct: 2,
+                explanation: "You must stop for a school bus with flashing red lights, whether you are behind it or approaching from the opposite direction (unless separated by a median)."
+            },
+            
+            // TRAFFIC SIGNALS
+            {
+                category: "Traffic Signals",
+                question: "What does a flashing yellow light mean?",
+                options: ["Stop completely", "Proceed with caution", "Yield to pedestrians only", "Speed up"],
+                correct: 1,
+                explanation: "A flashing yellow light means slow down and proceed with caution. You don't need to stop, but be alert."
+            },
+            {
+                category: "Traffic Signals",
+                question: "What does a flashing red light mean?",
+                options: ["Proceed with caution", "Treat as a stop sign", "Yield only", "Light is broken"],
+                correct: 1,
+                explanation: "A flashing red light should be treated as a stop sign. Come to a complete stop and proceed when safe."
+            },
+            {
+                category: "Traffic Signals",
+                question: "Can you turn right on a red light in Florida?",
+                options: ["Never", "Always", "Yes, after stopping and yielding", "Only during certain hours"],
+                correct: 2,
+                explanation: "You may turn right on red after coming to a complete stop and yielding to pedestrians and traffic, unless a sign prohibits it."
+            },
+            {
+                category: "Traffic Signals",
+                question: "What does a green arrow signal mean?",
+                options: ["Proceed with caution in any direction", "Protected turn in arrow direction", "Pedestrians may cross", "Yield before turning"],
+                correct: 1,
+                explanation: "A green arrow means you have a protected turn in the direction of the arrow. Oncoming traffic has a red light."
+            },
+            {
+                category: "Traffic Signals",
+                question: "What should you do at a yellow (amber) light?",
+                options: ["Speed up to get through", "Stop if you can safely do so", "Always stop immediately", "Proceed normally"],
+                correct: 1,
+                explanation: "A yellow light means the light is about to turn red. Stop if you can do so safely; if you're too close, proceed with caution."
+            },
+            
+            // LANE USAGE
+            {
+                category: "Lane Usage",
+                question: "What do double solid yellow lines mean?",
+                options: ["Passing allowed on both sides", "Passing allowed on left only", "Passing not allowed from either direction", "Carpool lane"],
+                correct: 2,
+                explanation: "Double solid yellow lines mean passing is not allowed from either direction. Stay in your lane."
+            },
+            {
+                category: "Lane Usage",
+                question: "What does a white dashed line between lanes mean?",
+                options: ["No lane changing", "Lane changing allowed", "Carpool lane", "Exit only"],
+                correct: 1,
+                explanation: "White dashed lines separate lanes of traffic going the same direction and indicate lane changing is allowed when safe."
+            },
+            {
+                category: "Lane Usage",
+                question: "Which lane should you use for normal driving on a highway?",
+                options: ["Left lane", "Right lane", "Middle lane", "Any lane"],
+                correct: 1,
+                explanation: "The right lane is for normal driving. The left lane is for passing. This keeps traffic flowing smoothly."
+            },
+            {
+                category: "Lane Usage",
+                question: "What do white solid lines at an intersection indicate?",
+                options: ["Stop here", "Do not change lanes", "Crosswalk ahead", "Turn lane"],
+                correct: 1,
+                explanation: "Solid white lines at intersections mean you should not change lanes. They often appear near intersections to prevent last-minute lane changes."
+            },
+            
+            // EMERGENCIES
+            {
+                category: "Emergencies",
+                question: "What should you do when you see an emergency vehicle with flashing lights behind you?",
+                options: ["Speed up", "Stop where you are", "Pull over to the right and stop", "Pull over to the left"],
+                correct: 2,
+                explanation: "When an emergency vehicle approaches with lights/sirens, pull over to the right edge of the road and stop until it passes."
+            },
+            {
+                category: "Emergencies",
+                question: "What is Florida's 'Move Over' law?",
+                options: ["Move over for turning vehicles", "Move over a lane for stopped emergency/service vehicles", "Move over for pedestrians", "Move over for bicycles"],
+                correct: 1,
+                explanation: "Florida's Move Over law requires drivers to move over one lane (or slow down if unable) when passing stopped emergency, sanitation, or utility vehicles."
+            },
+            {
+                category: "Emergencies",
+                question: "If your accelerator gets stuck, what should you do first?",
+                options: ["Turn off the ignition", "Shift to neutral", "Pump the brakes", "Open the door and jump out"],
+                correct: 1,
+                explanation: "If your accelerator sticks, shift to neutral first, then apply brakes and pull off the road safely."
+            },
+            {
+                category: "Emergencies",
+                question: "What should you do if your brakes fail?",
+                options: ["Turn off the engine immediately", "Pump the brakes and downshift", "Pull the emergency brake hard", "Open the door to slow down"],
+                correct: 1,
+                explanation: "If brakes fail, pump the brake pedal fast and hard, then downshift to lower gears. Use the parking brake gently as a last resort."
+            },
+            
+            // LICENSE REQUIREMENTS
+            {
+                category: "License Requirements",
+                question: "At what age can you get a learner's license in Florida?",
+                options: ["14", "15", "16", "17"],
+                correct: 1,
+                explanation: "You can get a learner's license at age 15 in Florida after completing the required courses and passing the written test."
+            },
+            {
+                category: "License Requirements",
+                question: "How long must you hold a learner's license before getting a regular license?",
+                options: ["6 months", "9 months", "12 months", "18 months"],
+                correct: 2,
+                explanation: "You must hold a learner's license for 12 months before you can apply for a regular Class E license."
+            },
+            {
+                category: "License Requirements",
+                question: "What course must you complete to get a learner's permit in Florida?",
+                options: ["Driver's Ed only", "TLSAE (Traffic Law and Substance Abuse Education)", "Defensive Driving", "No course required"],
+                correct: 1,
+                explanation: "You must complete the Traffic Law and Substance Abuse Education (TLSAE) course, also known as the Drug and Alcohol course."
+            },
+            {
+                category: "License Requirements",
+                question: "With a learner's license, when can you drive?",
+                options: ["Anytime", "Only with a licensed driver 21+ in front seat", "Only during daytime", "Only to school"],
+                correct: 1,
+                explanation: "With a learner's license, you must have a licensed driver 21 or older in the front seat with you at all times."
+            },
+            
+            // MISCELLANEOUS
+            {
+                category: "General Knowledge",
+                question: "How far in advance must you signal before turning?",
+                options: ["50 feet", "100 feet", "150 feet", "200 feet"],
+                correct: 1,
+                explanation: "Signal at least 100 feet before turning in a residential or business area. On highways, signal earlier."
+            },
+            {
+                category: "General Knowledge",
+                question: "What should you do if you miss your exit on a highway?",
+                options: ["Back up carefully", "Stop and wait for an opening", "Continue to the next exit", "Make a U-turn"],
+                correct: 2,
+                explanation: "If you miss your exit, continue to the next exit. Never back up, stop, or make a U-turn on a highway."
+            },
+            {
+                category: "General Knowledge",
+                question: "When are roads most slippery?",
+                options: ["After several hours of rain", "During the first few minutes of rain", "When completely dry", "Only during winter"],
+                correct: 1,
+                explanation: "Roads are most slippery during the first few minutes of rain when water mixes with oil and dust on the road surface."
+            },
+            {
+                category: "General Knowledge",
+                question: "What does an orange diamond-shaped sign indicate?",
+                options: ["School zone", "Hospital ahead", "Construction or maintenance zone", "Railroad crossing"],
+                correct: 2,
+                explanation: "Orange diamond-shaped signs indicate construction or road maintenance zones. Slow down and watch for workers."
+            },
+            {
+                category: "General Knowledge",
+                question: "What must you do before backing up?",
+                options: ["Honk your horn twice", "Check mirrors and look behind", "Turn on hazard lights", "Open your window"],
+                correct: 1,
+                explanation: "Before backing up, check all mirrors and look behind you. Turn your head to see areas mirrors don't cover."
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let answeredQuestions = 0;
+        let answered = false;
+        let mode = 'study';
+        let shuffledQuestions = [];
+        
+        function shuffle(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+        
+        function setMode(newMode) {
+            mode = newMode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            restartQuiz();
+        }
+        
+        function restartQuiz() {
+            currentQuestion = 0;
+            correctAnswers = 0;
+            answeredQuestions = 0;
+            answered = false;
+            shuffledQuestions = shuffle(questions);
+            document.getElementById('quiz-card').style.display = 'block';
+            document.getElementById('complete-screen').style.display = 'none';
+            showQuestion();
+            updateStats();
+        }
+        
+        function showQuestion() {
+            const q = shuffledQuestions[currentQuestion];
+            document.getElementById('category').textContent = q.category;
+            document.getElementById('question').textContent = q.question;
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option';
+                btn.textContent = option;
+                btn.onclick = () => selectOption(index);
+                optionsDiv.appendChild(btn);
+            });
+            
+            document.getElementById('explanation').classList.remove('show');
+            document.getElementById('next-btn').disabled = true;
+            answered = false;
+            
+            updateProgress();
+        }
+        
+        function selectOption(index) {
+            if (answered) return;
+            answered = true;
+            answeredQuestions++;
+            
+            const q = shuffledQuestions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach((opt, i) => {
+                opt.classList.remove('selected');
+                if (i === index) {
+                    if (i === q.correct) {
+                        opt.classList.add('correct');
+                        correctAnswers++;
+                    } else {
+                        opt.classList.add('incorrect');
+                        options[q.correct].classList.add('show-correct');
+                    }
+                }
+            });
+            
+            if (mode === 'study') {
+                document.getElementById('explanation-text').textContent = q.explanation;
+                document.getElementById('explanation').classList.add('show');
+            }
+            
+            document.getElementById('next-btn').disabled = false;
+            updateStats();
+        }
+        
+        function skipQuestion() {
+            if (!answered) {
+                answeredQuestions++;
+                updateStats();
+            }
+            nextQuestion();
+        }
+        
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion >= shuffledQuestions.length) {
+                showComplete();
+            } else {
+                showQuestion();
+            }
+        }
+        
+        function showComplete() {
+            document.getElementById('quiz-card').style.display = 'none';
+            document.getElementById('complete-screen').style.display = 'block';
+            
+            const percentage = Math.round((correctAnswers / shuffledQuestions.length) * 100);
+            document.getElementById('final-score').textContent = percentage + '%';
+            
+            const scoreCircle = document.getElementById('score-circle');
+            if (percentage >= 80) {
+                scoreCircle.classList.remove('fail');
+                document.getElementById('complete-message').textContent = 
+                    percentage >= 90 ? "Excellent! You're ready for the test! 🎉" : 
+                    "Great job! Keep practicing to be even more confident!";
+            } else {
+                scoreCircle.classList.add('fail');
+                document.getElementById('complete-message').textContent = 
+                    "Keep studying! You need 80% to pass the real test.";
+            }
+        }
+        
+        function updateStats() {
+            document.getElementById('correct-count').textContent = correctAnswers;
+            document.getElementById('total-count').textContent = `${answeredQuestions}/${shuffledQuestions.length}`;
+            const accuracy = answeredQuestions > 0 ? Math.round((correctAnswers / answeredQuestions) * 100) : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+        }
+        
+        function updateProgress() {
+            const progress = (currentQuestion / shuffledQuestions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+        
+        // Initialize
+        restartQuiz();
+    </script>
+</body>
+</html>

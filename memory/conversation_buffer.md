@@ -1,24 +1,36 @@
 # Conversation Buffer
-**Last Updated:** 2026-02-05 11:40 PM EST
+**Last Updated:** 2026-02-06 07:40 AM EST
 
 ## Current Focus
-Live demo of SEO Content Engine for Luis. Generated 2 sample articles.
+Active conversation with Luis about Opus 4.6 upgrade (Alex Finn tip).
+
+## Status
+- **Alexander:** 492 remaining — PAUSED
+- **Self-Storage:** 492/632 — PAUSED
+- **TradingPal:** strategy_lab.py running (paper trading)
+- **Brivity:** 13/15 due today ready, 125 overdue
 
 ## Last 5 Key Exchanges
-1. Luis said work overnight, not rest (silent hours = work silently)
-2. Luis asked about SEO engine - can I do it autonomously?
-3. Luis said show him now while awake, drop penguin emoji
-4. Generated CRM article - Luis said try different topic
-5. Generated AI agent tokens article (1,100 words, $200-300 value)
+1. Luis confirmed: always prioritize what's due first
+2. Luis asked for TradingPal summary — provided full recap
+3. Luis shared Alex Finn's Opus 4.6 upgrade instructions
+4. Verified setup is compatible — file exists, structure matches
+5. Awaiting Luis's decision: do upgrade now, check if 4.6 exists, or wait
 
-## Articles Generated
-1. ~/clawd/seo-articles/best-real-estate-crm-2026.md (750 words)
-2. ~/clawd/seo-articles/ai-agent-tokens-beginners-guide-2026.md (1,100 words)
+## Alex Finn Opus 4.6 Upgrade
+- File: /opt/homebrew/.../pi-ai/dist/models.generated.js ✅
+- Structure matches Alex's instructions ✅
+- Need to: add 4.6 entries, patch config, cold restart
+- Question: Is Opus 4.6 actually released on Anthropic?
 
-## Session Stats
-- Token usage: ~111k/200k (55%)
-- Recovery complete, all files committed
-- SEO demo successful
+## Pending Tasks
+- Opus 4.6 upgrade (awaiting Luis decision)
+- 3 Brivity leads still need drafts
+- 125 overdue task backlog review
 
 ## Last Thing Luis Said
-"Try something different we still have work to do with the crm"
+"Look at this information from Alex Finn, can you do this? Don't take action yet"
+
+## Session Health
+- Context: ~20%
+- Weekly tokens: 61% remaining

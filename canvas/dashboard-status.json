@@ -1,0 +1,35 @@
+{
+  "updated": "2026-01-28 10:01 PM EST",
+  "projects": {
+    "alexander": {
+      "name": "Alexander Phone Lookups",
+      "done": 831,
+      "total": 2300,
+      "remaining": 1507,
+      "status": "running"
+    },
+    "selfStorage": {
+      "name": "Self-Storage Phones",
+      "done": 181,
+      "total": 632,
+      "remaining": 451,
+      "phones": 134,
+      "status": "running"
+    },
+    "expiredListings": {
+      "name": "Expired Listings",
+      "done": 21,
+      "total": 1309,
+      "remaining": 1288,
+      "status": "running"
+    },
+    "tradingpal": {
+      "name": "TradingPal Degens",
+      "balance": 11.27,
+      "record": "16W-16L",
+      "profit": 29.40,
+      "botsRunning": 3,
+      "status": "active"
+    }
+  }
+}

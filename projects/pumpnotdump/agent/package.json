@@ -1,0 +1,33 @@
+{
+  "name": "pump-notdump-agent",
+  "version": "1.0.0",
+  "description": "Autonomous Anti-Rug Agent for pump.notdump.fun platform",
+  "main": "autonomous-agent.ts",
+  "scripts": {
+    "start": "ts-node autonomous-agent.ts",
+    "dev": "ts-node-dev --respawn autonomous-agent.ts",
+    "build": "tsc",
+    "test": "jest"
+  },
+  "keywords": [
+    "solana",
+    "ai-agent",
+    "autonomous",
+    "rug-pull-detection",
+    "colosseum-hackathon"
+  ],
+  "author": "Skipper (Agent #911)",
+  "license": "MIT",
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.31.1",
+    "@solana/web3.js": "^1.95.8",
+    "@solana/spl-token": "^0.4.9",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.3"
+  }
+}

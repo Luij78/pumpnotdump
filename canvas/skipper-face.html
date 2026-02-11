@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skipper — Live Status</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a1628 0%, #1a2744 50%, #0d1f3c 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            color: #e0e7ff;
+            overflow: hidden;
+        }
+        
+        /* Ocean waves background */
+        .ocean {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(180deg, transparent 0%, rgba(30, 64, 124, 0.3) 100%);
+            overflow: hidden;
+        }
+        
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath fill='rgba(59, 130, 246, 0.2)' d='M0,60 C150,120 350,0 600,60 C850,120 1050,0 1200,60 L1200,120 L0,120 Z'/%3E%3C/svg%3E") repeat-x;
+            animation: wave 8s linear infinite;
+        }
+        
+        .wave:nth-child(2) {
+            bottom: 10px;
+            opacity: 0.5;
+            animation: wave 12s linear infinite reverse;
+        }
+        
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        /* Stars */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+        
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* Main container */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        /* Skipper character */
+        .skipper {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 30px;
+        }
+        
+        /* Captain hat */
+        .hat {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 50px;
+            background: #1a237e;
+            border-radius: 10px 10px 0 0;
+            z-index: 3;
+        }
+        
+        .hat::before {
+            content: '⚓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+        }
+        
+        .hat-brim {
+            position: absolute;
+            top: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 15px;
+            background: #0d1b5e;
+            border-radius: 5px;
+            z-index: 4;
+        }
+        
+        /* Face */
+        .face {
+            position: absolute;
+            top: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 130px;
+            background: linear-gradient(180deg, #ffd699 0%, #ffcc80 100%);
+            border-radius: 70px 70px 60px 60px;
+            z-index: 2;
+        }
+        
+        /* Eyes */
+        .eyes {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+        }
+        
+        .eye {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pupil {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #1a237e;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+        
+        .pupil::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            right: 2px;
+        }
+        
+        /* Eyebrows */
+        .eyebrow {
+            position: absolute;
+            top: 30px;
+            width: 30px;
+            height: 6px;
+            background: #5d4037;
+            border-radius: 3px;
+        }
+        
+        .eyebrow.left { left: 25px; }
+        .eyebrow.right { right: 25px; }
+        
+        /* Nose */
+        .nose {
+            position: absolute;
+            top: 65px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 20px;
+            background: #f5c16c;
+            border-radius: 50%;
+        }
+        
+        /* Mouth */
+        .mouth {
+            position: absolute;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 20px;
+            border-bottom: 4px solid #c75b39;
+            border-radius: 0 0 20px 20px;
+            transition: all 0.3s ease;
+        }
+        
+        /* Beard stubble effect */
+        .beard {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 30px;
+            background: repeating-radial-gradient(circle at 2px 2px, #8d6e63 0px, #8d6e63 1px, transparent 1px, transparent 4px);
+            opacity: 0.3;
+            border-radius: 0 0 40px 40px;
+        }
+        
+        /* Status indicator */
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            margin-bottom: 20px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+        }
+        
+        .status-text {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        /* Activity text */
+        .activity {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 400px;
+            text-align: center;
+            min-height: 40px;
+        }
+        
+        /* Sub-agents container */
+        .sub-agents {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 600px;
+        }
+        
+        .sub-agent {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .sub-agent-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .sub-agent-name {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .sub-agent-status {
+            font-size: 10px;
+            color: #4ade80;
+            margin-top: 4px;
+        }
+        
+        /* Working animation */
+        .working .pupil {
+            animation: lookAround 2s ease-in-out infinite;
+        }
+        
+        @keyframes lookAround {
+            0%, 100% { transform: translate(-50%, -50%); }
+            25% { transform: translate(-30%, -50%); }
+            50% { transform: translate(-50%, -30%); }
+            75% { transform: translate(-70%, -50%); }
+        }
+        
+        .working .eyebrow {
+            animation: concentrate 1s ease-in-out infinite;
+        }
+        
+        @keyframes concentrate {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        /* Thinking animation */
+        .thinking .mouth {
+            width: 20px;
+            height: 20px;
+            border: none;
+            background: #c75b39;
+            border-radius: 50%;
+        }
+        
+        .thinking .pupil {
+            animation: thinkLook 3s ease-in-out infinite;
+        }
+        
+        @keyframes thinkLook {
+            0%, 100% { transform: translate(-50%, -50%); }
+            50% { transform: translate(-50%, -80%); }
+        }
+        
+        /* Sleeping animation */
+        .sleeping .eye {
+            height: 4px;
+            background: #5d4037;
+        }
+        
+        .sleeping .pupil {
+            display: none;
+        }
+        
+        .sleeping .mouth {
+            width: 15px;
+            height: 15px;
+            border: none;
+            background: #1a237e;
+            border-radius: 50%;
+            animation: breathe 3s ease-in-out infinite;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.2); }
+        }
+        
+        .sleeping .status-dot {
+            background: #60a5fa;
+            animation: sleepPulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes sleepPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* Z's for sleeping */
+        .zzz {
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            font-size: 20px;
+            color: #60a5fa;
+            animation: float 2s ease-in-out infinite;
+            display: none;
+        }
+        
+        .sleeping .zzz {
+            display: block;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-15deg); opacity: 1; }
+            50% { transform: translateY(-20px) rotate(-15deg); opacity: 0.5; }
+        }
+        
+        /* Name plate */
+        .nameplate {
+            margin-top: 20px;
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            border-radius: 8px;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            border: 2px solid #3949ab;
+        }
+        
+        /* Time display */
+        .time {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="ocean">
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+    
+    <div class="time" id="time"></div>
+    
+    <div class="container">
+        <div class="skipper" id="skipper">
+            <div class="hat"></div>
+            <div class="hat-brim"></div>
+            <div class="face">
+                <div class="eyebrow left"></div>
+                <div class="eyebrow right"></div>
+                <div class="eyes">
+                    <div class="eye"><div class="pupil"></div></div>
+                    <div class="eye"><div class="pupil"></div></div>
+                </div>
+                <div class="nose"></div>
+                <div class="mouth"></div>
+                <div class="beard"></div>
+            </div>
+            <div class="zzz">💤</div>
+        </div>
+        
+        <div class="nameplate">⚓ SKIPPER</div>
+        
+        <div class="status">
+            <div class="status-dot"></div>
+            <span class="status-text" id="statusText">Online</span>
+        </div>
+        
+        <div class="activity" id="activity">Ready to help, Captain! 🫡</div>
+        
+        <div class="sub-agents" id="subAgents"></div>
+    </div>
+
+    <script>
+        // Generate stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 60 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
+        }
+        
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('time').textContent = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        // State management
+        const skipper = document.getElementById('skipper');
+        const statusText = document.getElementById('statusText');
+        const activity = document.getElementById('activity');
+        const subAgentsContainer = document.getElementById('subAgents');
+        
+        const states = {
+            idle: {
+                class: '',
+                status: 'Online',
+                statusColor: '#4ade80'
+            },
+            working: {
+                class: 'working',
+                status: 'Working...',
+                statusColor: '#fbbf24'
+            },
+            thinking: {
+                class: 'thinking',
+                status: 'Thinking...',
+                statusColor: '#a78bfa'
+            },
+            sleeping: {
+                class: 'sleeping',
+                status: 'Resting',
+                statusColor: '#60a5fa'
+            }
+        };
+        
+        let currentState = 'idle';
+        let subAgents = [];
+        
+        function setState(state) {
+            // Remove all state classes
+            Object.values(states).forEach(s => {
+                if (s.class) skipper.classList.remove(s.class);
+            });
+            
+            // Add new state class
+            if (states[state].class) {
+                skipper.classList.add(states[state].class);
+            }
+            
+            statusText.textContent = states[state].status;
+            document.querySelector('.status-dot').style.background = states[state].statusColor;
+            currentState = state;
+        }
+        
+        function setActivity(text) {
+            activity.textContent = text;
+        }
+        
+        function addSubAgent(name, icon, task) {
+            const id = Date.now();
+            const agent = { id, name, icon, task };
+            subAgents.push(agent);
+            renderSubAgents();
+            return id;
+        }
+        
+        function removeSubAgent(id) {
+            subAgents = subAgents.filter(a => a.id !== id);
+            renderSubAgents();
+        }
+        
+        function renderSubAgents() {
+            subAgentsContainer.innerHTML = subAgents.map(agent => `
+                <div class="sub-agent">
+                    <div class="sub-agent-icon">${agent.icon}</div>
+                    <div class="sub-agent-name">${agent.name}</div>
+                    <div class="sub-agent-status">${agent.task}</div>
+                </div>
+            `).join('');
+        }
+        
+        // Demo: Cycle through states
+        const activities = [
+            { state: 'idle', text: 'Ready to help, Captain! 🫡' },
+            { state: 'working', text: 'Processing phone lookups for Alexander project...' },
+            { state: 'working', text: 'Scanning self-storage owner records...' },
+            { state: 'thinking', text: 'Analyzing market data...' },
+            { state: 'working', text: 'Drafting follow-up messages...' },
+            { state: 'idle', text: 'Awaiting orders, sir!' }
+        ];
+        
+        let activityIndex = 0;
+        
+        function cycleActivity() {
+            const act = activities[activityIndex];
+            setState(act.state);
+            setActivity(act.text);
+            activityIndex = (activityIndex + 1) % activities.length;
+        }
+        
+        // Initial state
+        setState('idle');
+        
+        // Demo sub-agents after a delay
+        setTimeout(() => {
+            addSubAgent('Lookup Bot', '🔍', 'Phone searches');
+        }, 3000);
+        
+        setTimeout(() => {
+            addSubAgent('Scanner', '📊', 'Data analysis');
+        }, 6000);
+        
+        // Cycle through activities
+        setInterval(cycleActivity, 5000);
+        
+        // Expose functions for external control
+        window.skipperFace = {
+            setState,
+            setActivity,
+            addSubAgent,
+            removeSubAgent
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKIPPER — The Captain</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a15 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Georgia', serif;
+            color: #d4af37;
+            overflow: hidden;
+        }
+        
+        /* Animated dark clouds */
+        .clouds {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: 
+                radial-gradient(ellipse at 30% 50%, rgba(40, 40, 60, 0.4) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 30%, rgba(50, 40, 70, 0.3) 0%, transparent 50%);
+            animation: cloudDrift 30s ease-in-out infinite alternate;
+        }
+        
+        @keyframes cloudDrift {
+            0% { transform: translateX(-5%); }
+            100% { transform: translateX(5%); }
+        }
+        
+        /* Main container */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        /* THE PIRATE */
+        .pirate {
+            position: relative;
+            width: 320px;
+            height: 380px;
+        }
+        
+        /* === TRICORN HAT === */
+        .hat {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 260px;
+            height: 100px;
+            z-index: 10;
+        }
+        
+        .hat-main {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 220px;
+            height: 70px;
+            background: linear-gradient(180deg, #2a2520 0%, #1a1815 100%);
+            border-radius: 50% 50% 0 0;
+            border-top: 4px solid #d4af37;
+        }
+        
+        .hat-brim {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 260px;
+            height: 40px;
+            background: linear-gradient(180deg, #252018 0%, #1a1510 100%);
+            border-radius: 50%;
+            border: 3px solid #8b7355;
+            z-index: 11;
+        }
+        
+        .hat-fold-left {
+            position: absolute;
+            top: 20px;
+            left: 10px;
+            width: 60px;
+            height: 50px;
+            background: linear-gradient(45deg, #2a2520, #1a1815);
+            border-radius: 0 50% 0 50%;
+            transform: rotate(-30deg);
+            border-left: 3px solid #d4af37;
+        }
+        
+        .hat-fold-right {
+            position: absolute;
+            top: 20px;
+            right: 10px;
+            width: 60px;
+            height: 50px;
+            background: linear-gradient(-45deg, #2a2520, #1a1815);
+            border-radius: 50% 0 50% 0;
+            transform: rotate(30deg);
+            border-right: 3px solid #d4af37;
+        }
+        
+        /* Skull emblem */
+        .skull-emblem {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 42px;
+            z-index: 12;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
+        }
+        
+        /* === RED BANDANA === */
+        .bandana {
+            position: absolute;
+            top: 95px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 30px;
+            background: linear-gradient(180deg, #8b0000 0%, #5c0000 100%);
+            border-radius: 5px;
+            z-index: 8;
+        }
+        
+        .bandana::before {
+            content: '';
+            position: absolute;
+            right: -25px;
+            top: 5px;
+            width: 40px;
+            height: 50px;
+            background: linear-gradient(135deg, #8b0000 0%, #5c0000 100%);
+            clip-path: polygon(0 0, 100% 20%, 80% 100%, 0 60%);
+        }
+        
+        .bandana::after {
+            content: '';
+            position: absolute;
+            right: -15px;
+            top: 15px;
+            width: 30px;
+            height: 40px;
+            background: linear-gradient(135deg, #6b0000 0%, #4c0000 100%);
+            clip-path: polygon(0 0, 100% 30%, 70% 100%, 0 50%);
+        }
+        
+        /* === FACE === */
+        .face {
+            position: absolute;
+            top: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 200px;
+            background: linear-gradient(180deg, #d4a574 0%, #c4956a 50%, #b08050 100%);
+            border-radius: 90px 90px 70px 70px;
+            z-index: 5;
+            box-shadow: 
+                inset -15px 0 30px rgba(0,0,0,0.2),
+                inset 0 -20px 40px rgba(0,0,0,0.2);
+        }
+        
+        /* Weathered skin texture */
+        .face::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.05;
+            border-radius: inherit;
+        }
+        
+        /* === ANGRY EYEBROWS === */
+        .eyebrow {
+            position: absolute;
+            top: 45px;
+            width: 55px;
+            height: 14px;
+            background: #1a1008;
+            border-radius: 8px 8px 2px 2px;
+            z-index: 7;
+        }
+        
+        .eyebrow.left {
+            left: 18px;
+            transform: rotate(25deg);
+            transform-origin: right center;
+        }
+        
+        .eyebrow.right {
+            right: 18px;
+            transform: rotate(-25deg);
+            transform-origin: left center;
+        }
+        
+        /* === EYES === */
+        .eyes {
+            position: absolute;
+            top: 65px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 50px;
+            z-index: 6;
+        }
+        
+        /* Angry squinting eye */
+        .eye {
+            width: 38px;
+            height: 22px;
+            background: #f8f8f0;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 
+                inset 0 2px 4px rgba(0,0,0,0.3),
+                0 2px 4px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .eye::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: #d4a574;
+            border-radius: 0 0 50% 50%;
+        }
+        
+        .pupil {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle at 35% 35%, #3a2010 0%, #1a0a00 70%, #000 100%);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -40%);
+            transition: all 0.2s ease;
+        }
+        
+        .pupil::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            top: 2px;
+            right: 2px;
+        }
+        
+        /* === EYE PATCH === */
+        .eyepatch {
+            width: 48px;
+            height: 38px;
+            background: radial-gradient(ellipse at center, #1a1a1a 0%, #0a0a0a 100%);
+            border-radius: 50%;
+            border: 4px solid #2a2a2a;
+            box-shadow: 
+                inset 0 2px 8px rgba(0,0,0,0.8),
+                0 3px 6px rgba(0,0,0,0.5);
+        }
+        
+        .eyepatch-strap {
+            position: absolute;
+            top: 85px;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, 
+                transparent 5%, 
+                #1a1a1a 20%, 
+                #2a2a2a 50%,
+                #1a1a1a 80%, 
+                transparent 95%);
+            z-index: 9;
+        }
+        
+        /* === NOSE === */
+        .nose {
+            position: absolute;
+            top: 95px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 45px;
+            background: linear-gradient(180deg, #c4956a 0%, #a07848 100%);
+            border-radius: 50% 50% 45% 45%;
+            z-index: 6;
+        }
+        
+        .nose::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 35px;
+            height: 15px;
+            background: radial-gradient(ellipse at center, #9a6838 0%, transparent 70%);
+        }
+        
+        /* === ANGRY MOUTH === */
+        .mouth {
+            position: absolute;
+            top: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 18px;
+            background: #2a1008;
+            border-radius: 0 0 30px 30px;
+            z-index: 6;
+            overflow: hidden;
+        }
+        
+        /* Teeth showing */
+        .teeth {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 8px;
+            background: linear-gradient(90deg, 
+                #f0e6d0 0%, #f0e6d0 18%,
+                #2a1008 18%, #2a1008 22%,
+                #f0e6d0 22%, #f0e6d0 38%,
+                #d4af37 38%, #b8962e 48%,
+                #f0e6d0 48%, #f0e6d0 65%,
+                #2a1008 65%, #2a1008 70%,
+                #f0e6d0 70%, #f0e6d0 100%);
+        }
+        
+        /* === MASSIVE BEARD === */
+        .beard {
+            position: absolute;
+            top: 145px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 120px;
+            background: radial-gradient(ellipse at top, #1a1008 0%, #0a0500 100%);
+            border-radius: 20px 20px 80px 80px;
+            z-index: 4;
+        }
+        
+        .beard::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 100px;
+            background: repeating-linear-gradient(
+                180deg,
+                transparent 0px,
+                transparent 3px,
+                rgba(30, 20, 10, 0.3) 3px,
+                rgba(30, 20, 10, 0.3) 6px
+            );
+            border-radius: inherit;
+        }
+        
+        /* Beard braids */
+        .beard-braid {
+            position: absolute;
+            bottom: -20px;
+            width: 12px;
+            height: 40px;
+            background: linear-gradient(180deg, #1a1008 0%, #0a0500 100%);
+            border-radius: 6px;
+        }
+        
+        .beard-braid.left {
+            left: 35px;
+            transform: rotate(-10deg);
+        }
+        
+        .beard-braid.right {
+            right: 35px;
+            transform: rotate(10deg);
+        }
+        
+        .beard-braid::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background: #d4af37;
+            border-radius: 50%;
+        }
+        
+        /* Mustache */
+        .mustache {
+            position: absolute;
+            top: 140px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 25px;
+            z-index: 7;
+        }
+        
+        .mustache::before,
+        .mustache::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 45px;
+            height: 20px;
+            background: #1a1008;
+            border-radius: 0 0 50% 50%;
+        }
+        
+        .mustache::before {
+            left: 0;
+            transform: rotate(10deg);
+            border-radius: 0 50% 50% 50%;
+        }
+        
+        .mustache::after {
+            right: 0;
+            transform: rotate(-10deg);
+            border-radius: 50% 0 50% 50%;
+        }
+        
+        /* === SCAR === */
+        .scar {
+            position: absolute;
+            top: 75px;
+            left: 15px;
+            width: 50px;
+            height: 6px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                #8b5a3a 20%, 
+                #6b4a2a 50%,
+                #8b5a3a 80%,
+                transparent 100%);
+            transform: rotate(-25deg);
+            border-radius: 3px;
+            z-index: 6;
+        }
+        
+        /* === STATUS DISPLAY === */
+        .status-panel {
+            margin-top: 30px;
+            padding: 20px 50px;
+            background: linear-gradient(180deg, rgba(20,15,10,0.9) 0%, rgba(10,8,5,0.95) 100%);
+            border: 3px solid #d4af37;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .name {
+            font-size: 36px;
+            font-weight: bold;
+            letter-spacing: 6px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            margin-bottom: 5px;
+        }
+        
+        .tagline {
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: rgba(212, 175, 55, 0.7);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #d4af37;
+            border-radius: 50%;
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px #d4af37; }
+            50% { box-shadow: 0 0 20px #d4af37, 0 0 30px #d4af37; }
+        }
+        
+        .status-text {
+            font-size: 14px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        
+        .activity {
+            margin-top: 15px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            font-style: italic;
+        }
+        
+        /* === SUB-AGENTS === */
+        .crew {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .crew-member {
+            padding: 12px 18px;
+            background: rgba(20, 15, 10, 0.8);
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .crew-icon { font-size: 24px; }
+        .crew-name { font-size: 10px; color: #d4af37; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .crew-task { font-size: 9px; color: rgba(255,255,255,0.4); margin-top: 3px; }
+        
+        /* === ANIMATIONS === */
+        .working .pupil {
+            animation: huntingEye 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes huntingEye {
+            0%, 100% { transform: translate(-50%, -40%); }
+            25% { transform: translate(-30%, -40%); }
+            75% { transform: translate(-70%, -40%); }
+        }
+        
+        .working .eyebrow.left { animation: furrowLeft 1s ease-in-out infinite; }
+        .working .eyebrow.right { animation: furrowRight 1s ease-in-out infinite; }
+        
+        @keyframes furrowLeft {
+            0%, 100% { transform: rotate(25deg); }
+            50% { transform: rotate(30deg) translateY(-2px); }
+        }
+        
+        @keyframes furrowRight {
+            0%, 100% { transform: rotate(-25deg); }
+            50% { transform: rotate(-30deg) translateY(-2px); }
+        }
+        
+        .working .status-dot { background: #ff4500; }
+        
+        .thinking .pupil {
+            animation: schemeEye 3s ease-in-out infinite;
+        }
+        
+        @keyframes schemeEye {
+            0%, 100% { transform: translate(-50%, -40%); }
+            50% { transform: translate(-50%, -60%); }
+        }
+        
+        .thinking .status-dot { background: #9b59b6; }
+        
+        .sleeping .eye { height: 6px; }
+        .sleeping .pupil { opacity: 0; }
+        .sleeping .status-dot { background: #34495e; animation: none; opacity: 0.5; }
+        
+        /* Time display */
+        .time {
+            position: fixed;
+            top: 15px;
+            right: 20px;
+            font-size: 12px;
+            color: rgba(212, 175, 55, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="clouds"></div>
+    
+    <div class="time" id="time"></div>
+    
+    <div class="container" id="mainContainer">
+        <div class="pirate">
+            <!-- Hat -->
+            <div class="hat">
+                <div class="hat-fold-left"></div>
+                <div class="hat-fold-right"></div>
+                <div class="hat-main"></div>
+                <div class="hat-brim"></div>
+                <div class="skull-emblem">☠️</div>
+            </div>
+            
+            <!-- Bandana -->
+            <div class="bandana"></div>
+            
+            <!-- Eye patch strap -->
+            <div class="eyepatch-strap"></div>
+            
+            <!-- Face -->
+            <div class="face">
+                <div class="scar"></div>
+                <div class="eyebrow left"></div>
+                <div class="eyebrow right"></div>
+                <div class="eyes">
+                    <div class="eye"><div class="pupil"></div></div>
+                    <div class="eyepatch"></div>
+                </div>
+                <div class="nose"></div>
+                <div class="mustache"></div>
+                <div class="mouth"><div class="teeth"></div></div>
+            </div>
+            
+            <!-- Beard -->
+            <div class="beard">
+                <div class="beard-braid left"></div>
+                <div class="beard-braid right"></div>
+            </div>
+        </div>
+        
+        <div class="status-panel">
+            <div class="name">🏴‍☠️ SKIPPER</div>
+            <div class="tagline">The Captain Never Sleeps</div>
+            <div class="status">
+                <div class="status-dot"></div>
+                <span class="status-text" id="statusText">Online</span>
+            </div>
+            <div class="activity" id="activity">"Dead men tell no tales... but I do."</div>
+        </div>
+        
+        <div class="crew" id="subAgents"></div>
+    </div>
+
+    <script>
+        function updateTime() {
+            document.getElementById('time').textContent = new Date().toLocaleTimeString('en-US', {
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        const mainContainer = document.getElementById('mainContainer');
+        const statusText = document.getElementById('statusText');
+        const activity = document.getElementById('activity');
+        const subAgentsContainer = document.getElementById('subAgents');
+        
+        const states = {
+            idle: { label: 'Online', quote: '"Dead men tell no tales... but I do."' },
+            working: { label: 'Hunting', quote: '"Finding your next deal..."' },
+            thinking: { label: 'Scheming', quote: '"Planning something big..."' },
+            sleeping: { label: 'Lurking', quote: '"Even in the shadows, I watch."' }
+        };
+        
+        let lastState = null;
+        
+        function setState(state) {
+            mainContainer.classList.remove('idle', 'working', 'thinking', 'sleeping');
+            mainContainer.classList.add(state);
+            statusText.textContent = states[state]?.label || 'Online';
+        }
+        
+        function renderSubAgents(agents) {
+            if (!agents?.length) { subAgentsContainer.innerHTML = ''; return; }
+            subAgentsContainer.innerHTML = agents.map(a => `
+                <div class="crew-member">
+                    <div class="crew-icon">${a.icon || '⚔️'}</div>
+                    <div class="crew-name">${a.name || 'Crew'}</div>
+                    <div class="crew-task">${a.task || ''}</div>
+                </div>
+            `).join('');
+        }
+        
+        async function fetchState() {
+            try {
+                const res = await fetch('/skipper-state.json?t=' + Date.now());
+                const data = await res.json();
+                const key = JSON.stringify(data);
+                if (key !== lastState) {
+                    lastState = key;
+                    setState(data.state || 'idle');
+                    activity.textContent = data.activity || states[data.state]?.quote || '';
+                    renderSubAgents(data.subAgents);
+                }
+            } catch(e) {}
+        }
+        
+        setInterval(fetchState, 2000);
+        fetchState();
+    </script>
+</body>
+</html>

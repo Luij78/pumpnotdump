@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "skills": {
+    "trading-coach": {
+      "version": "1.0.0",
+      "installedAt": 1770355880304
+    },
+    "binance-dca": {
+      "version": "1.2.0",
+      "installedAt": 1770355881817
+    }
+  }
+}

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎯 Skipper Priorities</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      color: #fff;
+      padding: 24px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+    .header h1 { font-size: 28px; }
+    .back-link {
+      color: #60a5fa;
+      text-decoration: none;
+      background: rgba(96,165,250,0.15);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .back-link:hover { background: rgba(96,165,250,0.25); }
+    
+    .priority-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+      border-left: 4px solid;
+    }
+    .priority-card.p0 { border-color: #ef4444; background: rgba(239,68,68,0.1); }
+    .priority-card.p1 { border-color: #f59e0b; background: rgba(245,158,11,0.1); }
+    .priority-card.p2 { border-color: #3b82f6; background: rgba(59,130,246,0.1); }
+    .priority-card.p3 { border-color: #8b5cf6; background: rgba(139,92,246,0.1); }
+    
+    .priority-card h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .priority-card .badge {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    .p0 .badge { background: rgba(239,68,68,0.3); color: #fca5a5; }
+    .p1 .badge { background: rgba(245,158,11,0.3); color: #fcd34d; }
+    .p2 .badge { background: rgba(59,130,246,0.3); color: #93c5fd; }
+    .p3 .badge { background: rgba(139,92,246,0.3); color: #c4b5fd; }
+    
+    .priority-card p { opacity: 0.8; line-height: 1.6; margin-bottom: 12px; }
+    .priority-card code {
+      background: rgba(0,0,0,0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 13px;
+    }
+    .priority-card ul {
+      margin-left: 20px;
+      opacity: 0.8;
+    }
+    .priority-card li { margin-bottom: 6px; }
+    
+    .checkpoint-box {
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+    .checkpoint-box h3 {
+      color: #f87171;
+      margin-bottom: 12px;
+    }
+    .checkpoint-box p { opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎯 Heartbeat Priorities</h1>
+    <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
+  </div>
+
+  <div class="priority-card p0">
+    <h2><span class="badge">#0</span> Check Token Usage</h2>
+    <p>Run <code>session_status</code> every heartbeat to monitor context usage.</p>
+    <p><strong>Alert Luis if context > 20%:</strong></p>
+    <p>"⚠️ Context at [X]%. Good time for checkpoint refresh?"</p>
+    <p>Then save to CHECKPOINT.md and wait for <code>/new</code>.</p>
+  </div>
+
+  <div class="priority-card p1">
+    <h2><span class="badge">#1</span> Report Project Status</h2>
+    <p><strong>Every heartbeat → Send Luis status of ALL projects:</strong></p>
+    <ul>
+      <li>Alexander: [X] done / [Y] remaining</li>
+      <li>Self-Storage: [X] done / [Y] remaining</li>
+      <li>Expired Listings: [X] done / [Y] remaining</li>
+      <li>TradingPal: bots running? | balance | recent trades?</li>
+    </ul>
+  </div>
+
+  <div class="priority-card p2">
+    <h2><span class="badge">#2</span> Batch Projects (Auto-Run)</h2>
+    <p><strong>Rule:</strong> Keep spawning batches until 100% complete. NO ASKING LUIS.</p>
+    <ul>
+      <li><strong>Alexander Phone Lookups</strong> — Individuals → TruePeopleSearch | LLCs → Sunbiz then TPS</li>
+      <li><strong>Self-Storage</strong> — ✅ COMPLETE</li>
+      <li><strong>Expired Listings</strong> — Phone lookups WAIT until Alexander complete</li>
+    </ul>
+  </div>
+
+  <div class="priority-card p3">
+    <h2><span class="badge">#3</span> TradingPal</h2>
+    <p><strong>Strategy Lab ACTIVE</strong> — Paper trading 13 strategies on BTC 15-min</p>
+    <ul>
+      <li>Location: <code>~/TradingPal/strategy_lab.py</code></li>
+      <li>Sends Telegram reports every 15 min</li>
+      <li>Current leader: <strong>early_bird</strong> (+$31.71, 67%)</li>
+      <li><strong>GO LIVE CRITERIA:</strong> 50+ trades, 60%+ win rate</li>
+      <li>Real trading OFF until strategy proven</li>
+    </ul>
+  </div>
+
+  <div class="checkpoint-box">
+    <h3>🚨 Memory Checkpoint System</h3>
+    <p>If context hits 20%, I save everything to <code>CHECKPOINT.md</code> and alert you to start a fresh session.</p>
+    <p>Manual trigger: Say <code>/checkpoint</code> anytime.</p>
+  </div>
+
+</body>
+</html>

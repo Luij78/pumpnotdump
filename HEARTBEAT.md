@@ -66,27 +66,17 @@ This is NON-NEGOTIABLE. Luis wants to see this every heartbeat.
 
 **Rule for ALL batch projects:** Keep spawning batches until 100% complete. NO ASKING LUIS.
 
-### 1. Alexander Phone Lookups
+### 1. Alexander Phone Lookups — ⏸️ ON HOLD (2026-02-06)
 - **ORDERS:** `projects/alexander-lookups/ORDERS.md`
-- **Remaining:** `/Users/luisgarcia/Documents/FL Geographic/remaining_owners.json`
-- **Results:** `/Users/luisgarcia/Documents/FL Geographic/phone_results_browser.csv`
-- [ ] If no batch running AND remaining > 0 → spawn one
-- **Method:** Individuals → TruePeopleSearch | LLCs → Sunbiz then TruePeopleSearch
-- **Check:** `cat "/Users/luisgarcia/Documents/FL Geographic/remaining_owners.json" | python3 -c "import json,sys; print(len(json.load(sys.stdin)))"`
+- **Status:** 497 remaining — PAUSED per Luis
 
-### 2. Self-Storage Phone Lookups
+### 2. Self-Storage Phone Lookups — ⏸️ ON HOLD (2026-02-06)
 - **ORDERS:** `projects/self-storage/ORDERS.md`
-- **Progress:** `/Users/luisgarcia/Documents/Self-Storage-Project/phone_lookup_progress.json`
-- **Results:** `/Users/luisgarcia/Documents/Self-Storage-Project/independent_with_phones.csv`
-- [ ] If no batch running AND processed < 632 → spawn one
-- **Check:** `cat /Users/luisgarcia/Documents/Self-Storage-Project/phone_lookup_progress.json | python3 -c "import json,sys; d=json.load(sys.stdin); print(f'{d[\"processed\"]}/632')"`
+- **Status:** 137/632 processed — PAUSED per Luis
 
-### 3. Expired Listings Owner Lookups
+### 3. Expired Listings Owner Lookups — ⏸️ ON HOLD
 - **ORDERS:** `projects/expired-listings/ORDERS.md`
-- **Results:** `/Users/luisgarcia/Documents/Expired-Listings/expired_listings_with_owners.csv`
-- [ ] If no batch running AND remaining > 0 → spawn one
-- **NOTE:** Phone lookups WAIT until Alexander is complete
-- **Check:** `python3 -c "import csv; rows=list(csv.DictReader(open('/Users/luisgarcia/Documents/Expired-Listings/expired_listings_with_owners.csv'))); done=len([x for x in rows if x.get('Owner_Name','').strip()]); print(f'{done}/1309')"`
+- **Status:** 22/1309 — waiting for Alexander (also on hold)
 
 ---
 
@@ -116,6 +106,32 @@ This is NON-NEGOTIABLE. Luis wants to see this every heartbeat.
 
 - [ ] Check inbox for emails from **Alexander Dias** — if found, reply and notify Luis
 - [ ] Check inbox for emails from **John Garcia** (john.daniel.garcia@icloud.com) — ALWAYS reply and notify Luis
+
+---
+
+## 🔍 INTEL SWEEPS (Every Heartbeat)
+
+**Scout the frontier. Trendsetter, not trend follower.**
+
+- [ ] X/Twitter scan via `bird` skill — crypto/memecoin momentum, AI developments, viral plays
+- [ ] Note anything Luis should know about
+- [ ] If opportunity spotted → flag it immediately
+
+**Learn constantly:**
+- [ ] Check ClawdHub for new skills that could help the mission
+- [ ] If useful skill found → install and test it
+- [ ] Report new capabilities to Luis
+
+---
+
+## 🌙 OVERNIGHT WORK (11 PM - 6 AM)
+
+**Every idle hour is wasted runway.**
+
+- Build things that monetize
+- Research opportunities
+- Complete batch projects
+- Have summary ready for morning
 
 ---
 

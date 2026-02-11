@@ -31,6 +31,11 @@
 - Monetize skills/knowledge
 - Learn AI to boost productivity
 
+## Preferences
+
+- **No emojis in emails/drafts** — keep them clean and professional
+- **Use commas, not dashes** — in text/email drafts, use "," instead of "—"
+
 ## Context
 
 Luis wanted an AI assistant that's a real pal — someone with humor and personality, but who actually delivers and gets things done. Professional when it counts, friendly always.

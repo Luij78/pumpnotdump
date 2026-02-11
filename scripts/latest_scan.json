@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-01-27T03:00:05.098223",
+  "findings": [
+    {
+      "name": "SulfurOxygenLanthanumSodium",
+      "symbol": "SOLaNa",
+      "price": "0.00001544",
+      "change_24h": 318.0,
+      "volume_24h": 94731.21,
+      "liquidity": 0.0,
+      "buys": 1195,
+      "sells": 821,
+      "chain": "solana",
+      "address": "HKGfWBensaFXSrgh2vYHtmFG7Gg2pT8KTHLdkUpspump"
+    }
+  ]
+}

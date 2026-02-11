@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚓ Skipper Heartbeat Monitor</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      min-height: 100vh;
+      color: #fff;
+      padding: 24px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+    .header h1 { 
+      font-size: 32px; 
+      font-weight: 700;
+      background: linear-gradient(90deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header .time { 
+      font-size: 16px; 
+      opacity: 0.7;
+      font-weight: 500;
+    }
+    .heartbeat-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(34, 197, 94, 0.15);
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    .heartbeat-dot {
+      width: 12px;
+      height: 12px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .tile {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 24px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .tile:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    .tile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .tile-title {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.6;
+      font-weight: 600;
+    }
+    .tile-status {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .status-active { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+    .status-running { background: rgba(59, 130, 246, 0.2); color: #60a5fa; animation: pulse 2s infinite; }
+    .status-paused { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+    .status-complete { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+
+    .tile-value {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+    .tile-subtitle {
+      font-size: 14px;
+      opacity: 0.7;
+      margin-bottom: 16px;
+    }
+
+    .progress-container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      height: 12px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .progress-bar {
+      height: 100%;
+      border-radius: 8px;
+      transition: width 0.5s ease;
+    }
+    .progress-green { background: linear-gradient(90deg, #22c55e, #4ade80); }
+    .progress-blue { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+    .progress-purple { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+    .progress-yellow { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+
+    .tile.large { grid-column: span 2; }
+    @media (max-width: 768px) {
+      .tile.large { grid-column: span 1; }
+    }
+
+    .bot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .bot-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .bot-item .icon { font-size: 24px; margin-bottom: 8px; }
+    .bot-item .name { font-size: 12px; opacity: 0.7; margin-bottom: 4px; }
+    .bot-item .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+    .bot-item .status-dot.online { background: #22c55e; }
+    .bot-item .status-dot.offline { background: #ef4444; }
+
+    .tile.accent-green { border-left: 4px solid #22c55e; }
+    .tile.accent-blue { border-left: 4px solid #3b82f6; }
+    .tile.accent-purple { border-left: 4px solid #8b5cf6; }
+    .tile.accent-yellow { border-left: 4px solid #f59e0b; }
+    .tile.accent-red { border-left: 4px solid #ef4444; }
+
+    .value-green { color: #4ade80; }
+    .value-blue { color: #60a5fa; }
+    .value-purple { color: #c084fc; }
+    .value-yellow { color: #fbbf24; }
+
+    .email-list {
+      margin-top: 12px;
+    }
+    .email-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .email-item .avatar {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .email-item .info { flex: 1; }
+    .email-item .name { font-weight: 600; font-size: 14px; }
+    .email-item .desc { font-size: 12px; opacity: 0.6; }
+    .email-item .status-badge {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .badge-monitoring { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+
+    .footer {
+      margin-top: 32px;
+      text-align: center;
+      opacity: 0.4;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>⚓ Skipper Heartbeat</h1>
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <div class="heartbeat-indicator">
+        <div class="heartbeat-dot"></div>
+        <span>Online</span>
+      </div>
+      <div class="time" id="current-time"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Alexander Phone Lookups -->
+    <div class="tile accent-blue">
+      <div class="tile-header">
+        <div class="tile-title">📧 Alexander Lookups</div>
+        <div class="tile-status status-running">Running</div>
+      </div>
+      <div class="tile-value value-blue">68%</div>
+      <div class="tile-subtitle">911 completed • 1,334 remaining</div>
+      <div class="progress-container">
+        <div class="progress-bar progress-blue" style="width: 68%"></div>
+      </div>
+      <div class="progress-text">
+        <span>911 / 2,245 total</span>
+        <span>Est. ~4h remaining</span>
+      </div>
+    </div>
+
+    <!-- Self-Storage Lookups -->
+    <div class="tile accent-green">
+      <div class="tile-header">
+        <div class="tile-title">🏢 Self-Storage Lookups</div>
+        <div class="tile-status status-complete">Complete</div>
+      </div>
+      <div class="tile-value value-green">100%</div>
+      <div class="tile-subtitle">489 unique • 408 phones found</div>
+      <div class="progress-container">
+        <div class="progress-bar progress-green" style="width: 100%"></div>
+      </div>
+      <div class="progress-text">
+        <span>492 / 492 processed</span>
+        <span>83% hit rate</span>
+      </div>
+    </div>
+
+    <!-- Expired Listings -->
+    <div class="tile accent-yellow">
+      <div class="tile-header">
+        <div class="tile-title">🏠 Expired Listings</div>
+        <div class="tile-status status-paused">Waiting</div>
+      </div>
+      <div class="tile-value value-yellow">2%</div>
+      <div class="tile-subtitle">Owner lookups • Phone after Alexander</div>
+      <div class="progress-container">
+        <div class="progress-bar progress-yellow" style="width: 2%"></div>
+      </div>
+      <div class="progress-text">
+        <span>22 / 1,309 owners found</span>
+        <span>Queued behind Alexander</span>
+      </div>
+    </div>
+
+    <!-- TradingPal -->
+    <div class="tile accent-purple">
+      <div class="tile-header">
+        <div class="tile-title">🤖 TradingPal Bots</div>
+        <div class="tile-status status-active">Active</div>
+      </div>
+      <div class="tile-value value-purple">$66.7</div>
+      <div class="tile-subtitle">MATIC in wallet • 3 bots running</div>
+      <div class="bot-grid">
+        <div class="bot-item">
+          <div class="icon">🔄</div>
+          <div class="name">Hold-to-Settle</div>
+          <span class="status-dot online"></span>
+        </div>
+        <div class="bot-item">
+          <div class="icon">📊</div>
+          <div class="name">Notifier</div>
+          <span class="status-dot online"></span>
+        </div>
+        <div class="bot-item">
+          <div class="icon">💰</div>
+          <div class="name">Redeemer</div>
+          <span class="status-dot online"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Email Monitoring -->
+    <div class="tile accent-blue large">
+      <div class="tile-header">
+        <div class="tile-title">📬 Email Monitoring</div>
+        <div class="tile-status status-active">Active</div>
+      </div>
+      <div class="tile-subtitle">Watching inbox for priority contacts</div>
+      <div class="email-list">
+        <div class="email-item">
+          <div class="avatar">AD</div>
+          <div class="info">
+            <div class="name">Alexander Dias</div>
+            <div class="desc">AI partnership • Phone lookup client</div>
+          </div>
+          <div class="status-badge badge-monitoring">Monitoring</div>
+        </div>
+        <div class="email-item">
+          <div class="avatar">JG</div>
+          <div class="info">
+            <div class="name">John Garcia</div>
+            <div class="desc">john.daniel.garcia@icloud.com</div>
+          </div>
+          <div class="status-badge badge-monitoring">Auto-Reply</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FlipHunter -->
+    <div class="tile accent-red">
+      <div class="tile-header">
+        <div class="tile-title">💎 FlipHunter</div>
+        <div class="tile-status status-paused">Paused</div>
+      </div>
+      <div class="tile-value" style="font-size: 24px; opacity: 0.5;">⏸️</div>
+      <div class="tile-subtitle">Paused per Luis • 192.168.5.51:8080</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Last refresh: <span id="refresh-time"></span> • Auto-updates every heartbeat
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      const opts = { 
+        weekday: 'short', 
+        month: 'short', 
+        day: 'numeric',
+        hour: '2-digit', 
+        minute: '2-digit',
+        timeZone: 'America/New_York' 
+      };
+      document.getElementById('current-time').textContent = 
+        now.toLocaleString('en-US', opts) + ' EST';
+      document.getElementById('refresh-time').textContent = 
+        now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'America/New_York' });
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+  </script>
+</body>
+</html>

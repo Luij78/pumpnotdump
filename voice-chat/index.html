@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skipper Voice Chat</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      color: #fff;
+    }
+    h1 { margin-bottom: 10px; font-size: 2rem; }
+    .subtitle { color: #888; margin-bottom: 30px; }
+    
+    .chat-container {
+      width: 100%;
+      max-width: 600px;
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      overflow-y: auto;
+      max-height: 50vh;
+    }
+    .message {
+      padding: 12px 16px;
+      margin: 10px 0;
+      border-radius: 16px;
+      max-width: 85%;
+      line-height: 1.5;
+    }
+    .user {
+      background: #4a9eff;
+      margin-left: auto;
+      text-align: right;
+    }
+    .assistant {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .thinking {
+      color: #888;
+      font-style: italic;
+    }
+    
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      width: 100%;
+      max-width: 600px;
+    }
+    
+    #talkBtn {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(145deg, #4a9eff, #2d7fd3);
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 8px 30px rgba(74, 158, 255, 0.3);
+    }
+    #talkBtn:hover { transform: scale(1.05); }
+    #talkBtn:active, #talkBtn.listening {
+      background: linear-gradient(145deg, #ff4a4a, #d32d2d);
+      box-shadow: 0 8px 30px rgba(255, 74, 74, 0.4);
+      transform: scale(0.95);
+    }
+    #talkBtn.listening::after {
+      content: '';
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 3px solid #ff4a4a;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.3); opacity: 0; }
+    }
+    
+    .status {
+      color: #888;
+      font-size: 0.9rem;
+      text-align: center;
+      min-height: 24px;
+    }
+    
+    #transcript {
+      width: 100%;
+      padding: 15px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 1rem;
+      resize: none;
+      min-height: 60px;
+    }
+    
+    .settings {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    .settings button {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      cursor: pointer;
+    }
+    .settings button:hover { background: rgba(255,255,255,0.2); }
+    
+    .voice-select {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>⚓ Skipper Voice Chat</h1>
+  <p class="subtitle">Push to talk, release to send</p>
+  
+  <div class="settings">
+    <select id="voiceSelect" class="voice-select">
+      <option value="">Loading voices...</option>
+    </select>
+    <button onclick="toggleMute()">🔊 TTS</button>
+  </div>
+  
+  <div class="chat-container" id="chat"></div>
+  
+  <div class="controls">
+    <p class="status" id="status">Ready to chat</p>
+    <button id="talkBtn">🎤 HOLD TO TALK</button>
+    <textarea id="transcript" placeholder="Your message will appear here..." readonly></textarea>
+  </div>
+
+  <script>
+    // Using local proxy to avoid CORS
+    
+    // Check microphone permission on load
+    async function checkMicPermission() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(track => track.stop());
+        statusEl.textContent = '✅ Mic ready - hold button to talk';
+        return true;
+      } catch (e) {
+        statusEl.textContent = '❌ Mic blocked! Click address bar 🔒 to allow';
+        console.error('Mic permission error:', e);
+        return false;
+      }
+    }
+    
+    // Check on page load
+    checkMicPermission();
+    
+    let recognition = null;
+    let isMuted = false;
+    let selectedVoice = null;
+    let isListening = false;
+    
+    const chatEl = document.getElementById('chat');
+    const statusEl = document.getElementById('status');
+    const transcriptEl = document.getElementById('transcript');
+    const talkBtn = document.getElementById('talkBtn');
+    const voiceSelect = document.getElementById('voiceSelect');
+    
+    // Initialize Speech Recognition
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+      
+      recognition.onresult = (event) => {
+        let transcript = '';
+        for (let i = 0; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        transcriptEl.value = transcript;
+      };
+      
+      recognition.onerror = (event) => {
+        console.error('Speech error:', event.error);
+        statusEl.textContent = 'Error: ' + event.error;
+        stopListening();
+      };
+      
+      recognition.onend = () => {
+        if (isListening) {
+          // Auto-stopped, send the message
+          sendMessage();
+        }
+      };
+    } else {
+      statusEl.textContent = 'Speech recognition not supported in this browser';
+      talkBtn.disabled = true;
+    }
+    
+    // Initialize TTS voices
+    function loadVoices() {
+      const voices = speechSynthesis.getVoices();
+      voiceSelect.innerHTML = '';
+      
+      // Prefer English voices, put them first
+      const englishVoices = voices.filter(v => v.lang.startsWith('en'));
+      const otherVoices = voices.filter(v => !v.lang.startsWith('en'));
+      
+      [...englishVoices, ...otherVoices].forEach((voice, i) => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `${voice.name} (${voice.lang})`;
+        if (voice.name.includes('Samantha') || voice.name.includes('Daniel')) {
+          option.selected = true;
+          selectedVoice = voice;
+        }
+        voiceSelect.appendChild(option);
+      });
+      
+      if (!selectedVoice && voices.length > 0) {
+        selectedVoice = voices[0];
+      }
+    }
+    
+    speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+    
+    voiceSelect.onchange = () => {
+      const voices = speechSynthesis.getVoices();
+      selectedVoice = voices[voiceSelect.value];
+    };
+    
+    function toggleMute() {
+      isMuted = !isMuted;
+      document.querySelector('.settings button').textContent = isMuted ? '🔇 TTS' : '🔊 TTS';
+    }
+    
+    // Push to talk handlers
+    let holdMode = true; // true = hold to talk, false = click to toggle
+    
+    talkBtn.onmousedown = talkBtn.ontouchstart = (e) => {
+      e.preventDefault();
+      if (holdMode) {
+        startListening();
+      }
+    };
+    
+    talkBtn.onmouseup = talkBtn.ontouchend = talkBtn.onmouseleave = (e) => {
+      if (holdMode && isListening) {
+        stopListening();
+      }
+    };
+    
+    // Alternative: double-click to toggle mode
+    talkBtn.ondblclick = (e) => {
+      e.preventDefault();
+      holdMode = !holdMode;
+      statusEl.textContent = holdMode ? 'Mode: Hold to talk' : 'Mode: Click to toggle';
+    };
+    
+    // Single click fallback for if hold doesn't work
+    talkBtn.onclick = (e) => {
+      if (!holdMode) {
+        if (isListening) {
+          stopListening();
+        } else {
+          startListening();
+        }
+      }
+    };
+    
+    // Keyboard shortcut: hold Space to talk
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && !e.repeat && document.activeElement !== transcriptEl) {
+        e.preventDefault();
+        startListening();
+      }
+    });
+    
+    document.addEventListener('keyup', (e) => {
+      if (e.code === 'Space' && isListening) {
+        stopListening();
+      }
+    });
+    
+    function startListening() {
+      if (!recognition) {
+        statusEl.textContent = '❌ Speech recognition not supported!';
+        return;
+      }
+      if (isListening) return;
+      
+      isListening = true;
+      transcriptEl.value = '';
+      talkBtn.classList.add('listening');
+      talkBtn.textContent = '🔴 LISTENING...';
+      statusEl.textContent = '🎤 Listening... (speak now)';
+      
+      try {
+        recognition.start();
+        console.log('Recognition started');
+      } catch (e) {
+        console.error('Recognition start error:', e);
+        statusEl.textContent = '❌ Error: ' + e.message;
+        isListening = false;
+        talkBtn.classList.remove('listening');
+        talkBtn.textContent = '🎤 HOLD TO TALK';
+      }
+    }
+    
+    function stopListening() {
+      if (!recognition) return;
+      
+      isListening = false;
+      talkBtn.classList.remove('listening');
+      talkBtn.textContent = '🎤 HOLD TO TALK';
+      
+      try {
+        recognition.stop();
+      } catch (e) {
+        console.error('Recognition stop error:', e);
+      }
+    }
+    
+    function addMessage(text, role) {
+      const msgEl = document.createElement('div');
+      msgEl.className = `message ${role}`;
+      msgEl.textContent = text;
+      chatEl.appendChild(msgEl);
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+    
+    function speak(text) {
+      if (isMuted || !text) return;
+      
+      // Cancel any ongoing speech
+      speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      
+      speechSynthesis.speak(utterance);
+    }
+    
+    async function sendMessage() {
+      const text = transcriptEl.value.trim();
+      if (!text) {
+        statusEl.textContent = 'No speech detected';
+        return;
+      }
+      
+      addMessage(text, 'user');
+      transcriptEl.value = '';
+      statusEl.textContent = 'Sending to Skipper...';
+      
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message: text })
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok && data.reply) {
+          addMessage(data.reply, 'assistant');
+          speak(data.reply);
+          statusEl.textContent = 'Ready to chat';
+        } else {
+          const errorMsg = data.error || 'Unknown error';
+          statusEl.textContent = 'Error: ' + errorMsg;
+          addMessage('Error: ' + errorMsg, 'assistant');
+        }
+      } catch (error) {
+        console.error('Send error:', error);
+        statusEl.textContent = 'Connection error';
+        addMessage('Connection error - is Clawdbot running?', 'assistant');
+      }
+    }
+  </script>
+</body>
+</html>

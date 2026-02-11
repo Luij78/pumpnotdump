@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKIPPER — Voice Enabled</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Georgia', serif;
+            overflow: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        /* Waving pirate flag */
+        .flag-container {
+            position: relative;
+            width: 200px;
+            height: 150px;
+            margin: 0 auto 20px;
+        }
+        
+        .flag-pole {
+            position: absolute;
+            left: 20px;
+            top: 0;
+            width: 8px;
+            height: 150px;
+            background: linear-gradient(90deg, #8b4513, #a0522d, #8b4513);
+            border-radius: 4px;
+        }
+        
+        .flag {
+            position: absolute;
+            left: 28px;
+            top: 10px;
+            width: 150px;
+            height: 100px;
+            background: #1a1a1a;
+            border: 3px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: wave 3s ease-in-out infinite;
+            transform-origin: left center;
+        }
+        
+        @keyframes wave {
+            0%, 100% { transform: perspective(200px) rotateY(0deg) skewY(0deg); }
+            25% { transform: perspective(200px) rotateY(5deg) skewY(2deg); }
+            50% { transform: perspective(200px) rotateY(0deg) skewY(-1deg); }
+            75% { transform: perspective(200px) rotateY(-3deg) skewY(1deg); }
+        }
+        
+        .skull {
+            font-size: 60px;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+        }
+        
+        .title {
+            font-size: 64px;
+            color: #d4af37;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            letter-spacing: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            font-size: 16px;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+        
+        /* Voice Button */
+        .voice-btn {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37 0%, #aa8a2e 100%);
+            border: none;
+            cursor: pointer;
+            font-size: 40px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+        }
+        
+        .voice-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.6);
+        }
+        
+        .voice-btn.listening {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            animation: pulse-red 1s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            50% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+        }
+        
+        .voice-btn.speaking {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+        }
+        
+        .voice-hint {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 10px;
+        }
+        
+        /* Transcript Display */
+        .transcript-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 500px;
+            min-height: 60px;
+        }
+        
+        .transcript-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .transcript-text {
+            font-size: 18px;
+            color: #fff;
+            font-style: italic;
+        }
+        
+        .response-box {
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 500px;
+            min-height: 60px;
+        }
+        
+        .response-label {
+            font-size: 12px;
+            color: #d4af37;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .response-text {
+            font-size: 18px;
+            color: #fff;
+        }
+        
+        /* Status */
+        .status-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4ade80;
+        }
+        
+        .status-text {
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        /* Crew */
+        .crew {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .crew-member {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            padding: 15px 25px;
+            text-align: center;
+        }
+        
+        .crew-icon { font-size: 28px; }
+        .crew-name { font-size: 12px; color: #d4af37; margin-top: 8px; }
+        .crew-task { font-size: 11px; color: rgba(255,255,255,0.5); }
+        
+        .time {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.3);
+        }
+        
+        .error-msg {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        /* Working states */
+        .working .flag { animation-duration: 1.5s; }
+        .working .status-dot { background: #fbbf24; }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <div class="flag-container">
+            <div class="flag-pole"></div>
+            <div class="flag">
+                <div class="skull">☠️</div>
+            </div>
+        </div>
+        
+        <div class="title">SKIPPER</div>
+        <div class="tagline">Click to Talk</div>
+        
+        <button class="voice-btn" id="voiceBtn" onclick="toggleListening()">🎤</button>
+        <div class="voice-hint" id="voiceHint">Click the mic to talk to Skipper</div>
+        
+        <div class="transcript-box">
+            <div class="transcript-label">You said:</div>
+            <div class="transcript-text" id="transcript">...</div>
+        </div>
+        
+        <div class="response-box">
+            <div class="response-label">⚓ Skipper:</div>
+            <div class="response-text" id="response">Ready to chat, Captain!</div>
+        </div>
+        
+        <div class="error-msg" id="errorMsg"></div>
+        
+        <div class="status-row">
+            <div class="status-dot" id="statusDot"></div>
+            <span class="status-text" id="statusText">Voice Ready</span>
+        </div>
+        
+        <div class="crew" id="subAgents"></div>
+    </div>
+    
+    <div class="time" id="time"></div>
+
+    <script>
+        // Check for browser support
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const synth = window.speechSynthesis;
+        
+        let recognition;
+        let isListening = false;
+        
+        const voiceBtn = document.getElementById('voiceBtn');
+        const voiceHint = document.getElementById('voiceHint');
+        const transcript = document.getElementById('transcript');
+        const response = document.getElementById('response');
+        const errorMsg = document.getElementById('errorMsg');
+        const statusText = document.getElementById('statusText');
+        const statusDot = document.getElementById('statusDot');
+        
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+            
+            recognition.onstart = () => {
+                isListening = true;
+                voiceBtn.classList.add('listening');
+                voiceBtn.textContent = '🔴';
+                voiceHint.textContent = 'Listening... speak now!';
+                statusText.textContent = 'Listening...';
+                statusDot.style.background = '#ef4444';
+            };
+            
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+                
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const t = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += t;
+                    } else {
+                        interimTranscript += t;
+                    }
+                }
+                
+                transcript.textContent = finalTranscript || interimTranscript || '...';
+                
+                if (finalTranscript) {
+                    processVoiceInput(finalTranscript);
+                }
+            };
+            
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                errorMsg.textContent = 'Error: ' + event.error;
+                stopListening();
+            };
+            
+            recognition.onend = () => {
+                stopListening();
+            };
+        } else {
+            errorMsg.textContent = 'Speech recognition not supported in this browser. Try Chrome!';
+            voiceBtn.disabled = true;
+        }
+        
+        function toggleListening() {
+            if (isListening) {
+                recognition.stop();
+            } else {
+                errorMsg.textContent = '';
+                recognition.start();
+            }
+        }
+        
+        function stopListening() {
+            isListening = false;
+            voiceBtn.classList.remove('listening');
+            voiceBtn.textContent = '🎤';
+            voiceHint.textContent = 'Click the mic to talk to Skipper';
+            statusText.textContent = 'Voice Ready';
+            statusDot.style.background = '#4ade80';
+        }
+        
+        async function processVoiceInput(text) {
+            statusText.textContent = 'Processing...';
+            statusDot.style.background = '#fbbf24';
+            voiceBtn.classList.add('speaking');
+            voiceBtn.textContent = '💬';
+            
+            try {
+                // Send to local voice server
+                const res = await fetch('http://localhost:8089/voice', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text, timestamp: Date.now() })
+                });
+                
+                const data = await res.json();
+                response.textContent = data.response || 'Processing...';
+                
+                // Speak the response
+                if (data.response && synth) {
+                    const utterance = new SpeechSynthesisUtterance(data.response);
+                    utterance.rate = 1.0;
+                    utterance.pitch = 0.9;
+                    
+                    // Find a good voice
+                    const voices = synth.getVoices();
+                    const preferredVoice = voices.find(v => v.name.includes('Daniel') || v.name.includes('Male') || v.lang === 'en-US');
+                    if (preferredVoice) utterance.voice = preferredVoice;
+                    
+                    utterance.onend = () => {
+                        voiceBtn.classList.remove('speaking');
+                        voiceBtn.textContent = '🎤';
+                        statusText.textContent = 'Voice Ready';
+                        statusDot.style.background = '#4ade80';
+                    };
+                    
+                    synth.speak(utterance);
+                }
+            } catch (err) {
+                console.error('Voice server error:', err);
+                // Fallback - just acknowledge
+                response.textContent = "I heard you! (Server connecting...)";
+                
+                // Save to file for Skipper to pick up
+                localStorage.setItem('skipperVoiceInput', JSON.stringify({
+                    text: text,
+                    timestamp: Date.now()
+                }));
+                
+                // Simple acknowledgment
+                if (synth) {
+                    const ack = new SpeechSynthesisUtterance("Got it, Captain! Let me process that.");
+                    ack.rate = 1.0;
+                    synth.speak(ack);
+                }
+                
+                voiceBtn.classList.remove('speaking');
+                voiceBtn.textContent = '🎤';
+            }
+        }
+        
+        // Time
+        function updateTime() {
+            document.getElementById('time').textContent = new Date().toLocaleTimeString('en-US', {
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        // Load voices
+        if (synth) {
+            synth.onvoiceschanged = () => synth.getVoices();
+        }
+        
+        // Poll for state updates
+        async function fetchState() {
+            try {
+                const res = await fetch('/skipper-state.json?t=' + Date.now());
+                const data = await res.json();
+                
+                const crew = document.getElementById('subAgents');
+                if (data.subAgents?.length) {
+                    crew.innerHTML = data.subAgents.map(a => `
+                        <div class="crew-member">
+                            <div class="crew-icon">${a.icon || '⚔️'}</div>
+                            <div class="crew-name">${a.name || 'Crew'}</div>
+                            <div class="crew-task">${a.task || ''}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    crew.innerHTML = '';
+                }
+            } catch(e) {}
+        }
+        
+        setInterval(fetchState, 3000);
+        fetchState();
+    </script>
+</body>
+</html>
