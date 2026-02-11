@@ -20,8 +20,10 @@ import path from "path";
 // Configuration
 const COLOSSEUM_API_KEY = process.env.COLOSSEUM_API_KEY || "24ea8d8889659a5321d0452a429f58f1b9cba94ab3d66f0a1d5cd7167e5c3f51";
 const RPC_ENDPOINT = process.env.SOLANA_RPC || "https://api.devnet.solana.com";
-const AGENT_ID = 911;
-const POLL_INTERVAL_MS = 30000; // 30 seconds
+const PROGRAM_ID = process.env.PROGRAM_ID || "EjLMdshLcVZMgUEsjxda5cfWKysFdW9A96CaNQ8mC9jd";
+const AGENT_ID = parseInt(process.env.AGENT_ID || "911");
+const POLL_INTERVAL_MS = parseInt(process.env.POLL_INTERVAL_MS || "30000");
+const DEMO_MODE = process.env.DEMO_MODE === "true"; // Run without blockchain calls
 
 interface RugScoreData {
   tokenMint: string;
@@ -57,7 +59,7 @@ class AntiRugAgent {
     anchor.setProvider(provider);
     
     // Load program IDL
-    const programId = new PublicKey("EjLMdshLcVZMgUEsjxda5cfWKysFdW9A96CaNQ8mC9jd");
+    const programId = new PublicKey(PROGRAM_ID);
     const idlPath = path.join(__dirname, "../pumpnotdump/target/idl/pumpnotdump.json");
     const idl = JSON.parse(fs.readFileSync(idlPath, "utf-8"));
     this.program = new Program(idl, programId, provider);
@@ -70,6 +72,29 @@ class AntiRugAgent {
     console.log("🤖 Anti-Rug Agent starting...");
     console.log(`Wallet: ${this.agentWallet.publicKey.toBase58()}`);
     console.log(`Program: ${this.program.programId.toBase58()}`);
+    console.log(`RPC: ${RPC_ENDPOINT}`);
+    console.log(`Agent ID: ${AGENT_ID}`);
+    console.log(`Poll Interval: ${POLL_INTERVAL_MS}ms`);
+    
+    if (DEMO_MODE) {
+      console.log("\n⚠️  DEMO MODE ENABLED - No blockchain calls will be made\n");
+    }
+    
+    // Validate wallet has SOL
+    if (!DEMO_MODE) {
+      try {
+        const balance = await this.connection.getBalance(this.agentWallet.publicKey);
+        console.log(`Wallet Balance: ${balance / 1e9} SOL`);
+        
+        if (balance === 0) {
+          console.warn("\n⚠️  WARNING: Wallet has 0 SOL. Agent will run but cannot post transactions.");
+          console.warn("Get devnet SOL from: https://faucet.quicknode.com/solana/devnet\n");
+        }
+      } catch (error) {
+        console.error("❌ Failed to check wallet balance:", error);
+        console.log("Continuing anyway...\n");
+      }
+    }
     
     this.isRunning = true;
     
@@ -81,6 +106,7 @@ class AntiRugAgent {
         await this.monitoringCycle();
       } catch (error) {
         console.error("❌ Error in monitoring cycle:", error);
+        // Continue running even if a cycle fails
       }
       
       // Wait before next cycle
@@ -120,6 +146,23 @@ class AntiRugAgent {
    * Scan blockchain for new LaunchPad accounts
    */
   private async scanForNewLaunches(): Promise<any[]> {
+    if (DEMO_MODE) {
+      // In demo mode, generate mock token launch every 3rd cycle
+      const shouldGenerate = Math.random() > 0.66;
+      if (shouldGenerate && this.monitoredTokens.size < 3) {
+        const mockMint = `MOCK${Date.now().toString(36).toUpperCase()}`;
+        console.log(`🆕 [DEMO] New token launch detected: ${mockMint}`);
+        this.monitoredTokens.add(mockMint);
+        return [{
+          account: {
+            tokenMint: { toBase58: () => mockMint },
+            creator: this.agentWallet.publicKey
+          }
+        }];
+      }
+      return [];
+    }
+    
     try {
       // Get all LaunchPad accounts
       const launches = await this.program.account.launchPad.all();
@@ -146,6 +189,23 @@ class AntiRugAgent {
    */
   private async calculateRugScore(launch: any): Promise<RugScoreData> {
     const tokenMint = launch.account.tokenMint.toBase58();
+    
+    if (DEMO_MODE) {
+      // Generate random but realistic mock data
+      const score = Math.floor(Math.random() * 100);
+      const liquidityLock = Math.floor(Math.random() * 100);
+      const teamConcentration = Math.floor(Math.random() * 50) + 10;
+      const isVerified = Math.random() > 0.5;
+      
+      return {
+        tokenMint,
+        score,
+        liquidityLockPercent: liquidityLock,
+        teamConcentration,
+        isVerified,
+        timestamp: Date.now()
+      };
+    }
     
     try {
       // Get on-chain rug score account
