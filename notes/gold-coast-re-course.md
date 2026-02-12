@@ -1135,3 +1135,13 @@ Four types:
 - **Line 22:** (a) Price — enter agreed-upon asking price when you know it
 - **Line 23:** (b) Financing Terms — check applicable boxes. If "other," write in what that means
 - **Lines 24-25:** Seller Financing — check box and fill in blanks if seller will hold a purchase money mortgage
+
+#### Slide 5 of 19 — Page 1 Lines (cont'd)
+- **Lines 26-28:** Assumption of Existing Mortgage — check if assumable, enter mortgage amount, assumption fee, term, year began, interest rate, fixed or variable
+- **Line 29:** Check box for lender approval assumption
+- **Line 37:** (c) Seller Expenses — if seller agrees to pay mortgage discount points or other closing costs, enter the percentage
+
+#### Slide 6 of 19 — Page 1 Lines (cont'd)
+- **Line 39:** 4. Broker Obligations
+- **Line 41:** 5. Multiple Listing Service
+- **Note:** Seller and broker should **initial the bottom of each page** in the spaces provided
