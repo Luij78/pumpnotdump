@@ -78,10 +78,10 @@ Over **$2.8 billion** lost to rug pulls in 2023. **90% of meme coin launches are
 
 ## 🚀 Deployment Status
 
-**Program ID:** `[Will be filled after deployment]`  
+**Program ID:** `D5HsjjMSrCJyEF1aUuionRsx7MXfKEFWtmSnAN3cQBvB`  
 **Network:** Solana Devnet  
 **Agent Status:** Deployed and monitoring  
-**Last Checked:** `[Will be filled by agent]`
+**Last Checked:** February 12, 2026 11:36 PM EST
 
 ---
 
