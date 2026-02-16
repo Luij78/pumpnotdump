@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://section8-finder.vercel.app/sitemap.xml
