@@ -44,3 +44,4 @@ next-env.d.ts
 /target/
 /programs/
 /tests/
+token-scanner/__pycache__/

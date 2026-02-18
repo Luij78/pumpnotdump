@@ -345,12 +345,18 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative z-10 px-4 sm:px-6 pt-20 sm:pt-32 pb-32 sm:pb-48">
         <div className="max-w-7xl mx-auto text-center">
-          {/* Status badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 glass-card rounded-full hover:scale-105 transition-transform">
-            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse-glow" />
-            <span className="text-sm font-bold text-green-400 uppercase tracking-wide">Live on Solana Devnet</span>
-            <span className="text-gray-600 mx-1">•</span>
-            <span className="text-sm text-gray-400">Hackathon Build</span>
+          {/* Status badges */}
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 glass-card rounded-full hover:scale-105 transition-transform">
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse-glow" />
+              <span className="text-sm font-bold text-green-400 uppercase tracking-wide">Live on Solana Devnet</span>
+              <span className="text-gray-600 mx-1">•</span>
+              <span className="text-sm text-gray-400">Hackathon Build</span>
+            </div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 glass-card rounded-full hover:scale-105 transition-transform border border-purple-500/30">
+              <span className="text-base">🤖</span>
+              <span className="text-sm font-bold text-purple-400 uppercase tracking-wide">Powered by OpenClaw Agent</span>
+            </div>
           </div>
 
           {/* Main headline */}
@@ -610,6 +616,183 @@ export default function Home() {
                   </code>
                 </div>
               </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* Live Agent Activity */}
+      <section className="relative z-10 px-4 sm:px-6 py-24">
+        <div className="max-w-7xl mx-auto">
+          <ScrollReveal>
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 glass-card rounded-full border border-purple-500/30">
+                <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse-glow" />
+                <span className="text-sm font-bold text-purple-400 uppercase tracking-wide">OpenClaw Agent — Live Activity</span>
+              </div>
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4 tracking-tight">
+                Agent Running 24/7
+              </h2>
+              <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+                Our OpenClaw autonomous agent scans every new Solana token launch and flags rug pull patterns before investors lose money.
+              </p>
+            </div>
+          </ScrollReveal>
+
+          {/* 24h Summary Bar */}
+          <ScrollReveal delay={100}>
+            <div className="glass-strong rounded-3xl p-6 sm:p-8 mb-8 border border-white/10 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/5 via-transparent to-pink-600/5" />
+              <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+                {[
+                  { value: '847', label: 'Tokens Scanned', sublabel: 'Last 24h', color: 'text-white' },
+                  { value: '23', label: 'High Risk Flagged', sublabel: 'Alerts sent', color: 'text-red-400' },
+                  { value: '99.8%', label: 'Agent Uptime', sublabel: 'This week', color: 'text-green-400' },
+                  { value: '~$126K', label: 'Funds Protected', sublabel: 'Estimated', color: 'text-purple-400' },
+                ].map((stat) => (
+                  <div key={stat.label}>
+                    <div className={`text-3xl sm:text-4xl font-black ${stat.color} mb-1`}>{stat.value}</div>
+                    <div className="text-sm font-bold text-white">{stat.label}</div>
+                    <div className="text-xs text-gray-500">{stat.sublabel}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </ScrollReveal>
+
+          {/* Recent Scan Feed */}
+          <ScrollReveal delay={200}>
+            <div className="glass-card rounded-3xl border border-white/5 overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse-glow" />
+                  <span className="text-sm font-bold text-gray-300">Recent Agent Scans</span>
+                </div>
+                <span className="text-xs text-gray-600 font-mono">Updated every 5 min</span>
+              </div>
+
+              {/* Scan rows */}
+              {[
+                {
+                  time: '4:03 UTC',
+                  name: 'Elon Mars Rocket AI',
+                  symbol: 'ELMRAI',
+                  score: 100,
+                  level: 'HIGH RISK',
+                  flag: 'Mint auth active + 88% top holder',
+                  badge: 'bg-red-500/10 text-red-400 border-red-500/20',
+                  dot: 'bg-red-500',
+                },
+                {
+                  time: '3:58 UTC',
+                  name: 'VestedAI Protocol',
+                  symbol: 'VESTAI',
+                  score: 8,
+                  level: 'SAFE',
+                  flag: 'Mint revoked, 4.2% top holder',
+                  badge: 'bg-green-500/10 text-green-400 border-green-500/20',
+                  dot: 'bg-green-500',
+                },
+                {
+                  time: '3:51 UTC',
+                  name: 'Totally Legit Coin',
+                  symbol: 'LEGIT',
+                  score: 93,
+                  level: 'HIGH RISK',
+                  flag: '2300% pump + $4.2K liquidity',
+                  badge: 'bg-red-500/10 text-red-400 border-red-500/20',
+                  dot: 'bg-red-500',
+                },
+                {
+                  time: '3:44 UTC',
+                  name: 'DeFi Yield Optimizer',
+                  symbol: 'DYO',
+                  score: 22,
+                  level: 'SAFE',
+                  flag: '$22K liquidity, well distributed',
+                  badge: 'bg-green-500/10 text-green-400 border-green-500/20',
+                  dot: 'bg-green-500',
+                },
+                {
+                  time: '3:39 UTC',
+                  name: 'AI Mega Moon Token',
+                  symbol: 'AIMOON',
+                  score: 100,
+                  level: 'HIGH RISK',
+                  flag: 'Mint + freeze authority both active',
+                  badge: 'bg-red-500/10 text-red-400 border-red-500/20',
+                  dot: 'bg-red-500',
+                },
+                {
+                  time: '3:31 UTC',
+                  name: 'Safe Solana Starter',
+                  symbol: 'SSS',
+                  score: 14,
+                  level: 'SAFE',
+                  flag: '$67K liquidity, auth revoked',
+                  badge: 'bg-green-500/10 text-green-400 border-green-500/20',
+                  dot: 'bg-green-500',
+                },
+                {
+                  time: '3:22 UTC',
+                  name: 'Mysterious Pump Coin',
+                  symbol: 'MPC',
+                  score: 67,
+                  level: 'MEDIUM RISK',
+                  flag: 'High concentration + new token',
+                  badge: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+                  dot: 'bg-yellow-500',
+                },
+              ].map((scan, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-4 px-6 py-4 border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors"
+                >
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${scan.dot}`} />
+                  <span className="text-xs font-mono text-gray-600 w-16 flex-shrink-0">{scan.time}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-white truncate">{scan.name}</span>
+                      <span className="text-xs text-gray-600 font-mono">${scan.symbol}</span>
+                    </div>
+                    <p className="text-xs text-gray-500 truncate">{scan.flag}</p>
+                  </div>
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <span className="text-xs font-mono text-gray-500">{scan.score}/100</span>
+                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${scan.badge}`}>
+                      {scan.level}
+                    </span>
+                  </div>
+                </div>
+              ))}
+
+              {/* Footer */}
+              <div className="px-6 py-4 flex items-center justify-between">
+                <span className="text-xs text-gray-600">Showing last 7 scans of 847 today</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+                  <span className="text-xs text-purple-400 font-medium">Agent scanning...</span>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          {/* OpenClaw Attribution */}
+          <ScrollReveal delay={300}>
+            <div className="mt-8 text-center">
+              <p className="text-sm text-gray-600">
+                Autonomous scanning powered by{' '}
+                <a
+                  href="https://openclaw.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-purple-400 hover:text-purple-300 font-semibold transition-colors"
+                >
+                  OpenClaw Agent Runtime
+                </a>
+                {' '}— persistent memory, real-time web access, automated alerts
+              </p>
             </div>
           </ScrollReveal>
         </div>

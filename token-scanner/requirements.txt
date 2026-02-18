@@ -1,0 +1,24 @@
+# pump.notdump Token Scanner — Python Dependencies
+# All stdlib-only for maximum portability. No pip install needed for core scanner.
+# Optional packages below for extended features.
+
+# Core scanner uses Python stdlib only:
+# - urllib.request (HTTP calls)
+# - json (API parsing)
+# - time, datetime (timestamps)
+# - sys, os, argparse (CLI)
+# - dataclasses (RiskReport, RiskFactor)
+
+# Optional: for extended analysis features
+# requests>=2.31.0          # Alternative HTTP (more ergonomic than urllib)
+# python-dotenv>=1.0.0      # Load .env files for TELEGRAM_BOT_TOKEN etc.
+# rich>=13.0.0              # Beautiful terminal output with colors/tables
+
+# To use dotenv for credentials:
+# pip install python-dotenv
+# Then add at top of scanner.py: from dotenv import load_dotenv; load_dotenv()
+
+# Production recommendations:
+# aiohttp>=3.9.0            # Async HTTP for high-throughput scanning
+# schedule>=1.2.0           # Python-native cron-style scheduling
+# redis>=5.0.0              # Cache scan results, dedup alerts
